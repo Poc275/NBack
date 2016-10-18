@@ -1,11 +1,3 @@
-var TrialResult = {
-	Audio_Success: 1,
-	Audio_Failure: 2,
-	Visual_Success: 3,
-	Visual_Failure: 4,
-};
-
-
 // Class that keeps track of the user's score
 function Score() {
 	var _target = TargetKind.None;

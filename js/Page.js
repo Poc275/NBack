@@ -1,4 +1,7 @@
 function Page() {
+    var self = this; // for event handlers
+    var startButton = document.getElementById('start-button');
+
 	// our list of trials
 	this.m_Trials = [];
 
@@ -75,6 +78,20 @@ function Page() {
     //     //Start our timer which calls back to start the application.
     //     InitialWait.Begin();
     //}
+    startButton.addEventListener('click', function(event) {
+        // check for start/pause via changing the text value of the button itself
+        if(event.target.value == "Start") {
+            event.target.value = "Pause";
+            event.target.textContent = "Pause";
+            // original timer = 675 * 10000 (675ms)
+            // in setTimeout() the delay is in milliseconds
+            // 'this' in an event handler is the object that fired the event
+            window.setTimeout(self.Start_Training, 675);
+        } else if(event.target.value == "Pause") {
+            event.target.value = "Start";
+            event.target.textContent = "Start";
+        }
+    });
 
     // Reset_Click() {
     //     StartButton.Content = Page_Resources.Start_Button;
@@ -136,14 +153,18 @@ function Page() {
     // }
 
     // callback for when the timer expires for the stimulus, hide the stimulus
-    this.hideStimulus() {
+    //this.hideStimulus() {
     	//FadeBoxOut.Begin();
-    }
+    //}
 
 
 
  	// FUNCTIONS
  	this.Start_Training = function() {
+        alert("Started Training!");
+
+        var blockCreator = new BlockCreator();
+
  		_playingGame = true;
 
  		//Set the stimulus fade-out timer
@@ -159,14 +180,15 @@ function Page() {
         //_score.HandleScores += handleScores;
 
         // we're starting, get the list of trials and clear the extra stuff
-        _n = _starting_N;
+        _n = self._starting_N;
         _blockNum = 0;
         _trialNum = 0;
-        m_Trials = BlockCreator.createBlock(_n);
+        //m_Trials = BlockCreator.createBlock(_n);
+        m_Trials = blockCreator.createBlock(_n);
         _score.startBlock(_n);
 
         // present the first trial to the user
-        presentTrialInfoToUser(m_Trials[_trialNum]);
+        self.presentTrialInfoToUser(m_Trials[_trialNum]);
         _score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget);
 
         // start the timers for the first trial
@@ -239,16 +261,16 @@ function Page() {
 
  		// start a new trial
  		_score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget());
- 		presentTrialInfoToUser(m_Trials[_trialNum]);
+ 		self.presentTrialInfoToUser(m_Trials[_trialNum]);
 
  		//Timer_1.Begin();
  		//TrialTimer.Begin();
  	}
 
- 	this.startBlock() {
+ 	this.startBlock = function() {
  		// start a new trial
  		_score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget());
- 		presentTrialInfoToUser(m_Trials[_trialNum]);
+ 		self.presentTrialInfoToUser(m_Trials[_trialNum]);
 
  		//Timer_1.Seek(new TimeSpan(0));
  		//TrailTimer.Seek(new TimeSpan(0));
@@ -256,12 +278,12 @@ function Page() {
  		//TrialTimer.Begin();
  	}
 
- 	this.handleScores(totalCorrect, totalScore) {
+ 	this.handleScores = function(totalCorrect, totalScore) {
  		//ScoreText.Text = totalScore.ToString();
  	}
 
  	// display trial information (square, audio, etc.) to the user
- 	this.presentTrialInfoToUser(t) {
+ 	this.presentTrialInfoToUser = function(t) {
  		switch(t.GetLetter()) {
  			case Consonant.Letter1:
  				// play audio...
@@ -343,7 +365,7 @@ function Page() {
  				iRow = 0;
  				break;
 
-			case default:
+			default:
  				break;
  		}
 

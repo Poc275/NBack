@@ -8,27 +8,31 @@ function BlockCreator() {
 	// FUNCTIONS
 	this.createBlock = function(n) {
 		// get a list of targets (positive trials) that should appear in the trials
-		var targets = getTargets();
+		var targets = this.getTargets();
 
 		var trials = [];
 
 		// the first n trials are completely random
 		for(var i = 0; i < n; i++) {
-			var t = getRandomTrial();
+			var t = this.getRandomTrial();
 			// too early in the list for this trial to have an earlier matching pair
-			t.SetSecondTrialInTarget = TargetKind.TooEarly;
+			t.SetSecondTrialInTarget(TargetKind.TooEarly);
 			trials.push(t);
 		}
 
 		for(var i = n; i < default_Block_Size + n; i++) {
 			// get a completely non-matching trial
-			var trialToAdd = getRandomTrial(trials[i - n]);
+			var trialToAdd = this.getRandomTrial(trials[i - n]);
 
 			var matchingKind;
 
 			// is this trial the 2nd in a target ("matching") pair? If so,
 			// we need to tweak it before we add it so that it matches
-			if(var matchingKind = targets.find(i - n) != undefined) {
+			var findResult = targets.find(function(el) {
+				return el === (i - n);
+			});
+			if(findResult != undefined) {
+				var matchingKind = targets.find(i - n);
 				var trialAlreadyAdded = trials[i - n];
 
 				// set the "matching kind" in the 2nd pair that we're adding
@@ -57,7 +61,7 @@ function BlockCreator() {
 
 		// audio targets
 		for(var i = 0; i < num_Audio_Targets; i++) {
-			var iTargetLocation = getRandomTargetLocation(targets);
+			var iTargetLocation = this.getRandomTargetLocation(targets);
 			var target = {};
 			target.Key = iTargetLocation;
 			target.Value = TargetKind.Audio;
@@ -66,7 +70,7 @@ function BlockCreator() {
 
 		// visual targets
 		for(var i = 0; i < num_Visual_Targets; i++) {
-			var iTargetLocation = getRandomTargetLocation(targets);
+			var iTargetLocation = this.getRandomTargetLocation(targets);
 			var target = {};
 			target.Key = iTargetLocation;
 			target.Value = TargetKind.Visual;
@@ -75,7 +79,7 @@ function BlockCreator() {
 
 		// both targets
 		for(var i = 0; i < num_Both_Targets; i++) {
-			var iTargetLocation = getRandomTargetLocation(targets);
+			var iTargetLocation = this.getRandomTargetLocation(targets);
 			var target = {};
 			target.Key = iTargetLocation;
 			target.Value = TargetKind.Both;
@@ -83,12 +87,11 @@ function BlockCreator() {
 		}
 
 		// sort the targets so they're all in order
-		// TODO: CHECK IF IT SORTS CORRECTLY BY VALUE
 		targets.sort(function(a, b) {
-			if(a.Value > b.Value) {
+			if(a.Key > b.Key) {
 				return 1;
 			}
-			if(a.Value < b.Value) {
+			if(a.Key < b.Key) {
 				return -1;
 			}
 			// a must be equal
@@ -111,7 +114,10 @@ function BlockCreator() {
 			var k;
 
 			// if this value is already used, just stay in the loop
-			if(targets.find(iLocation) == undefined) {
+			var findElement = targets.find(function(el) {
+				return el.Key === iLocation;
+			});
+			if(findElement === undefined) {
 				break;
 			}
 		} while(true);
