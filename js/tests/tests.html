@@ -2,28 +2,48 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>QUnit test page</title>
+  <title>NBack Unit Test Results</title>
   <link rel="stylesheet" href="qunit-2.0.1.css">
 </head>
 <body>
   <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
+  <!-- use the fixture for any HTML from the source page that is required for testing -->
+  <div id="qunit-fixture">
+    <!-- fixture for start button -->
+    <button id="start-button" value="Start">Start</button>
+
+    <!-- fixture for testing n-back display -->
+    <div class="text-center n-grid" id="N1">1</div>
+    <div class="text-center n-grid" id="N2">2</div>
+    <div class="text-center n-grid" id="N3">3</div>
+    <div class="text-center n-grid" id="N4">4</div>
+    <div class="text-center n-grid" id="N5">5</div>
+    <div class="text-center n-grid" id="N6">6</div>
+    <div class="text-center n-grid" id="N7">7</div>
+
+    <!-- fixture for progress bar -->
+    <div class="progress">
+        <div class="progress-bar progress-bar-success" id="prog-bar" 
+            role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+  </div>
 
   <!-- NBack js scripts -->
-  <script src="../Consonant.js"></script>
-  <script src="../SquarePosition.js"></script>
-  <script src="../TargetKind.js"></script>
-  <script src="../TrialResult.js"></script>
-  <script src="../Page.js"></script>
-  <script src="../Score.js"></script>
-  <script src="../Block.js"></script>
+  <script src="../Page.js" data-cover></script>
+  <script src="../Consonant.js" data-cover></script>
+  <script src="../SquarePosition.js" data-cover></script>
+  <script src="../TargetKind.js" data-cover></script>
+  <script src="../TrialResult.js" data-cover></script>
+  <script src="../Score.js" data-cover></script>
+  <script src="../Block.js" data-cover></script>
   <script src="../BlockCreator.js"></script>
-  <script src="../Trial.js"></script>
-  <script src="../App.js"></script>
+  <script src="../Trial.js" data-cover></script>
+  <!--<script src="../App.js" data-cover></script>-->
 
-  <!-- test js files -->
+  <!-- test runner -->
   <script src="qunit-2.0.1.js"></script>
   <script src="tests.js"></script>
-
 </body>
 </html>

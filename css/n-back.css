@@ -3,3 +3,23 @@
 	background-color: orange;
 	padding: 50px;
 }
+
+.n-grid {
+	border: 5px solid #808080;
+	border-radius: 5px;
+	background-color: rgba(129, 247, 53, 1);
+	padding: 15px;
+	font-size: 24px;
+	font-family: "Verdana";
+	font-weight: bold;
+	display: inline-block;
+	width: 75px;
+}
+
+.progress {
+	margin-top: 50px;
+}
+
+.progress-bar {
+	width: 0%;
+}

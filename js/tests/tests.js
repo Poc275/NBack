@@ -1,4 +1,168 @@
-// Block Creator tests
+// Page tests
+QUnit.test("Page class tests", function(assert) {
+	var page = new Page();
+
+	assert.ok(page instanceof Page, "Constructor instantiates ok");
+	assert.deepEqual(document.getElementById("N1").style.display, "inline-block", "N Back 1 is visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N2").style.display, "inline-block", "N Back 2 is visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N3").style.display, "none", "N Back 3 is NOT visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N4").style.display, "none", "N Back 4 is NOT visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N5").style.display, "none", "N Back 5 is NOT visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N6").style.display, "none", "N Back 6 is NOT visible at the start of a new trial");
+	assert.deepEqual(document.getElementById("N7").style.display, "none", "N Back 7 is NOT visible at the start of a new trial");
+
+	assert.deepEqual(document.getElementById("prog-bar").style.width, "0%", "Progress bar is initialised to 0%");
+
+});
+
+// Progress bar tests
+QUnit.test("Progress bar function tests", function(assert) {
+	var progressBar = document.getElementById("prog-bar");
+
+	assert.deepEqual(progressBar.style.width, "0%", "Progress bar is initialised to 0%");
+	setProgress(-10);
+	assert.deepEqual(progressBar.style.width, "0%", "Progress bar cannot be set below zero");
+	setProgress(101);
+	assert.deepEqual(progressBar.style.width, "0%", "Progress bar cannot be set above zero");
+	setProgress(50);
+	assert.deepEqual(progressBar.style.width, "50%", "Progress bar is set correctly");
+});
+
+// N display grid tests
+QUnit.test("N Display grid tests", function(assert) {
+	var N1 = document.getElementById("N1");
+	var N2 = document.getElementById("N2");
+	var N3 = document.getElementById("N3");
+	var N4 = document.getElementById("N4");
+	var N5 = document.getElementById("N5");
+	var N6 = document.getElementById("N6");
+	var N7 = document.getElementById("N7");
+
+	DisplayN(0);
+	assert.deepEqual(N1.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N2.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N3.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N4.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N5.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N6.style.display, "none", "All n displays are hidden when N = 0");
+	assert.deepEqual(N7.style.display, "none", "All n displays are hidden when N = 0");
+
+	DisplayN(1);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 1");
+	assert.deepEqual(N2.style.display, "none", "N2 hidden when N = 1");
+	assert.deepEqual(N3.style.display, "none", "N3 hidden when N = 1");
+	assert.deepEqual(N4.style.display, "none", "N4 hidden when N = 1");
+	assert.deepEqual(N5.style.display, "none", "N5 hidden when N = 1");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N = 1");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 1");
+
+	DisplayN(2);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 2");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 2");
+	assert.deepEqual(N3.style.display, "none", "N3 hidden when N = 2");
+	assert.deepEqual(N4.style.display, "none", "N4 hidden when N = 2");
+	assert.deepEqual(N5.style.display, "none", "N5 hidden when N = 2");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N = 2");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 2");
+
+	DisplayN(3);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 3");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 3");
+	assert.deepEqual(N3.style.display, "inline-block", "N3 visible when N = 3");
+	assert.deepEqual(N4.style.display, "none", "N4 hidden when N = 3");
+	assert.deepEqual(N5.style.display, "none", "N5 hidden when N = 3");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N = 3");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 3");
+
+	DisplayN(4);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 4");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 4");
+	assert.deepEqual(N3.style.display, "inline-block", "N3 visible when N = 4");
+	assert.deepEqual(N4.style.display, "inline-block", "N4 visible when N = 4");
+	assert.deepEqual(N5.style.display, "none", "N5 hidden when N = 4");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N = 4");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 4");
+
+	DisplayN(5);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 5");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 5");
+	assert.deepEqual(N3.style.display, "inline-block", "N3 visible when N = 5");
+	assert.deepEqual(N4.style.display, "inline-block", "N4 visible when N = 5");
+	assert.deepEqual(N5.style.display, "inline-block", "N5 visible when N = 5");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N = 5");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 5");
+
+	DisplayN(6);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 6");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 6");
+	assert.deepEqual(N3.style.display, "inline-block", "N3 visible when N = 6");
+	assert.deepEqual(N4.style.display, "inline-block", "N4 visible when N = 6");
+	assert.deepEqual(N5.style.display, "inline-block", "N5 visible when N = 6");
+	assert.deepEqual(N6.style.display, "inline-block", "N6 visible when N = 6");
+	assert.deepEqual(N7.style.display, "none", "N7 hidden when N = 6");
+
+	DisplayN(7);
+	assert.deepEqual(N1.style.display, "inline-block", "N1 visible when N = 7");
+	assert.deepEqual(N2.style.display, "inline-block", "N2 visible when N = 7");
+	assert.deepEqual(N3.style.display, "inline-block", "N3 visible when N = 7");
+	assert.deepEqual(N4.style.display, "inline-block", "N4 visible when N = 7");
+	assert.deepEqual(N5.style.display, "inline-block", "N5 visible when N = 7");
+	assert.deepEqual(N6.style.display, "inline-block", "N6 visible when N = 7");
+	assert.deepEqual(N7.style.display, "inline-block", "N7 visible when N = 7");
+
+	DisplayN(10);
+	assert.deepEqual(N1.style.display, "none", "N1 hidden when N > 7");
+	assert.deepEqual(N2.style.display, "none", "N2 hidden when N > 7");
+	assert.deepEqual(N3.style.display, "none", "N3 hidden when N > 7");
+	assert.deepEqual(N4.style.display, "none", "N4 hidden when N > 7");
+	assert.deepEqual(N5.style.display, "none", "N5 hidden when N > 7");
+	assert.deepEqual(N6.style.display, "none", "N6 hidden when N > 7");
+	assert.deepEqual(N7.style.display, "inline-block", "N7 visible when N > 7");
+	// if n > 7 then text should be changed accordingly
+	assert.deepEqual(N7.textContent, "10", "N7 changes text accordingly when N > 7");
+});
+
+// Score tests
+QUnit.test("Score class tests", function(assert) {
+	var score = new Score();
+	var abortedScore = [];
+	var badScore = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
+	var averageScore = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+
+	score.startBlock(2);
+
+	assert.ok(score instanceof Score, "Constructor instantiates ok");
+	assert.deepEqual(score.audioMistakes(), 0, "instantiated with 0 audio mistakes");
+	assert.deepEqual(score.visualMistakes(), 0, "instantiated with 0 visual mistakes");
+
+	score._nValues = abortedScore;
+	assert.deepEqual(score.getMeanN(), 0, "an aborted test has a meanN of 0");
+	assert.deepEqual(score.getPercentGFIncrease(), 0, "an aborted test has a 0% increase");
+
+	score._nValues = badScore;
+	assert.deepEqual(score.getMeanN(), 2, "a completely failed test has a meanN of 2");
+	assert.deepEqual(score.getPercentGFIncrease(), 0, "a completely failed test has a 0% increase");
+
+	score._nValues = averageScore;
+	assert.deepEqual(score.getMeanN(), 4, "a sample test has a meanN of 4");
+	// custom assertion for floats
+	// 3rd argument is the tolerance
+	assert.close(score.getPercentGFIncrease(), 1.45869, 0.00001, "a sample test has a 1.46% increase");
+
+	score._audioMistakesPerBlock = 7;
+	score._visualMistakesPerBlock = 6;
+	assert.deepEqual(score.endBlock(), -1, "a test with more than 5 combined mistakes results in n back - 1");
+
+	score._audioMistakesPerBlock = 1;
+	score._visualMistakesPerBlock = 2;
+	assert.deepEqual(score.endBlock(), 1, "a test with less than 3 visual and audio mistakes results in n back + 1");
+
+	score._audioMistakesPerBlock = 4;
+	score._visualMistakesPerBlock = 1;
+	assert.deepEqual(score.endBlock(), 0, "a test with 5 combined mistakes results in n back of 0");
+});
+
+// Block creator tests
 QUnit.test("Block creator class tests", function(assert) {
 	var blockCreator = new BlockCreator();
 	var trials = blockCreator.createBlock(2);
@@ -10,7 +174,7 @@ QUnit.test("Block creator class tests", function(assert) {
 
 	targets.forEach(function(el) {
 		if(el.Value === TargetKind.Audio) {
-			nAudioTargets++
+			nAudioTargets++;
 		} else if(el.Value === TargetKind.Visual) {
 			nVisualTargets++;
 		} else if (el.Value === TargetKind.Both) {
@@ -98,3 +262,16 @@ QUnit.test("Enums tests", function(assert) {
 	assert.deepEqual(TargetKind.WayTooEarly, undefined, "enums do not return non-existent members");
 	assert.deepEqual(TrialResult.Abject_Failure, undefined, "enums do not return non-existent members");
 });
+
+
+// custom assertion for floating point numbers
+// source: http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
+QUnit.assert.close = function(number, expected, error, message) {
+	if (error === void 0 || error === null) {
+		error = 0.00001;
+	}
+
+  	var result = number == expected || (number < expected + error && number > expected - error) || false;
+
+  	this.push(result, number, expected, message);
+};

@@ -26,9 +26,10 @@ function Page() {
 	this._score = new Score();
 
 
-	// ShowN.DisplayN(_starting_N);
+	DisplayN(this._starting_N);
  	//square.Opacity = 0;
- 	//ProgBar.setProgress(0);
+ 	setProgress(0);
+    
  	//DemoTimer.Completed += new EventHandler(demoStepEnded);
  	//InitialWait.Completed += new EventHandler(Start_Training);
  	//InitialWait.Duration = new TimeSpan(675 * 10000);//675ms
@@ -371,5 +372,62 @@ function Page() {
 
  		// highlight appropriate grid square...
  	}
+}
 
+
+// display appropriate N to user
+// from NDisplayGrid.xaml.cs
+function DisplayN(n) {
+    document.getElementById("N1").style.display = "none";
+    document.getElementById("N2").style.display = "none";
+    document.getElementById("N3").style.display = "none";
+    document.getElementById("N4").style.display = "none";
+    document.getElementById("N5").style.display = "none";
+    document.getElementById("N6").style.display = "none";
+    document.getElementById("N7").style.display = "none";
+
+    if (n > 7)
+    {
+        var n7 = document.getElementById("N7");
+        n7.style.display = "inline-block";
+        n7.textContent = n.toString();
+    } else {
+        if (n > 0) {
+            document.getElementById("N1").style.display = "inline-block";
+        }
+
+        if (n > 1) {
+            document.getElementById("N2").style.display = "inline-block";
+        }
+        
+        if (n > 2) {
+            document.getElementById("N3").style.display = "inline-block";
+        }
+        
+        if (n > 3) {
+            document.getElementById("N4").style.display = "inline-block";
+        }
+        
+        if (n > 4) {
+            document.getElementById("N5").style.display = "inline-block";
+        }
+        
+        if (n > 5) {
+            document.getElementById("N6").style.display = "inline-block";
+        }
+        
+        if (n > 6) {
+            document.getElementById("N7").style.display = "inline-block";
+        }
+    }
+}
+
+// set progress bar value
+// from ProgressBar.xaml.cs
+function setProgress(prog) {
+    if((prog > 100) || (prog < 0)) {
+        return;
+    }
+
+    document.getElementById("prog-bar").style.width = prog + "%";
 }

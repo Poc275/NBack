@@ -1,28 +1,28 @@
 // Class that keeps track of the user's score
 function Score() {
-	var _target = TargetKind.None;
-	var _n = 0;
-	var _nValues = [];
+	this._target = TargetKind.None;
+	this._n = 0;
+	this._nValues = [];
 
 	// set to true whenever an audio or visual key is pressed during a trial
-	var _audioKeyPressed = false;
-	var _visualKeyPressed = false;
+	this._audioKeyPressed = false;
+	this._visualKeyPressed = false;
 
-	var _audioMistakesPerBlock = 0;
-	var _visualMistakesPerBlock = 0;
+	this._audioMistakesPerBlock = 0;
+	this._visualMistakesPerBlock = 0;
 
-	var _score = 0;
+	this._score = 0;
 
-	var _TotalCorrect = 0;
+	this._TotalCorrect = 0;
 	
 
 	// GETS AND SETS
 	this.audioMistakes = function() {
-		return _audioMistakesPerBlock;
+		return this._audioMistakesPerBlock;
 	}
 
 	this.visualMistakes = function() {
-		return _visualMistakesPerBlock;
+		return this._visualMistakesPerBlock;
 	}
 
 
@@ -142,31 +142,31 @@ function Score() {
 
 	// called when a block is started
 	this.startBlock = function(n) {
-		_n = n;
-		_nValues.push(n);
+		this._n = n;
+		this._nValues.push(n);
 
-		_audioMistakesPerBlock = 0;
-		_visualMistakesPerBlock = 0;
-		_target = TargetKind.None;
+		this._audioMistakesPerBlock = 0;
+		this._visualMistakesPerBlock = 0;
+		this._target = TargetKind.None;
 
 		// clear the button press flags
-		_audioKeyPressed = false;
-		_visualKeyPressed = false;
+		this._audioKeyPressed = false;
+		this._visualKeyPressed = false;
 	}
 
 	// get the average N value so far
 	this.getMeanN = function() {
 		var meaN = 0;
 
-		if(_nValues.length < 1) {
+		if(this._nValues.length < 1) {
 			return 0;
 		}
 
-		_nValues.forEach(function(i) {
+		this._nValues.forEach(function(i) {
 			meaN += i;
 		});
 
-		return (meaN / _nValues.length);
+		return (meaN / this._nValues.length);
 	}
 
 	// calculate a very rough increase in gF based on the scores.
@@ -179,7 +179,7 @@ function Score() {
 		// found by using linear regession tool here: 
 		// http://www.xuru.org/rt/LR.asp#CopyPaste with estimated data from figure 2 in the paper.
 		try {
-			var meanN = getMeanN();
+			var meanN = this.getMeanN();
 			var days = (meanN - 3.0951) / .1073;
 
 			// compute gF increase from an assumed initial average of 9.5 (see figure 3). This is the 
@@ -209,19 +209,19 @@ function Score() {
 		var deltaN = 0;
 
 		// increase N if more than 3 mistakes per "modality" (see protocol)
-		if((_audioMistakesPerBlock < 3) && (_visualMistakesPerBlock < 3)) {
+		if((this._audioMistakesPerBlock < 3) && (this._visualMistakesPerBlock < 3)) {
 			deltaN = 1;
-		} else if((_audioMistakesPerBlock + _visualMistakesPerBlock) > 5) {
+		} else if((this._audioMistakesPerBlock + this._visualMistakesPerBlock) > 5) {
 			deltaN = -1;
 		}
 
-		_audioMistakesPerBlock = 0;
-		_visualMistakesPerBlock = 0;
-		_target = TargetKind.None;
+		this._audioMistakesPerBlock = 0;
+		this._visualMistakesPerBlock = 0;
+		this._target = TargetKind.None;
 
 		// clear button press flags
-		_audioKeyPressed = false;
-		_visualKeyPressed = false;
+		this._audioKeyPressed = false;
+		this._visualKeyPressed = false;
 
 		return deltaN;
 	}
