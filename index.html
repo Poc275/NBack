@@ -103,9 +103,9 @@
             </div>
 
             <!-- 1st grid row -->
-            <div class="col-xs-2 text-center cell">1</div>
-            <div class="col-xs-2 text-center cell">2</div>
-            <div class="col-xs-2 text-center cell">3</div>
+            <div id="top-left" class="col-xs-2 text-center cell"></div>
+            <div id="top-middle" class="col-xs-2 text-center cell"></div>
+            <div id="top-right" class="col-xs-2 text-center cell"></div>
 
             <!-- info popup col -->
             <div class="col-md-3 text-right">
@@ -117,21 +117,21 @@
 
         <!-- 2nd grid row -->
         <div class="row">
-            <div class="col-xs-2 col-lg-offset-3 text-center cell">4</div>
-            <div class="col-xs-2 text-center cell">5</div>
-            <div class="col-xs-2 text-center cell">6</div>
+            <div id="middle-left" class="col-xs-2 col-lg-offset-3 text-center cell"></div>
+            <div id="middle" class="col-xs-2 text-center cell"></div>
+            <div id="middle-right" class="col-xs-2 text-center cell"></div>
         </div>
 
         <!-- final grid row -->
         <div class="row">
-            <div class="col-xs-2 col-lg-offset-3 text-center cell">7</div>
-            <div class="col-xs-2 text-center cell">8</div>
-            <div class="col-xs-2 text-center cell">9</div>
+            <div id="bottom-left" class="col-xs-2 col-lg-offset-3 text-center cell"></div>
+            <div id="bottom-middle" class="col-xs-2 text-center cell"></div>
+            <div id="bottom-right" class="col-xs-2 text-center cell"></div>
         </div>
 
         <!-- key indicator and progress bar -->
         <div class="row">
-            <div class="col-xs-2 col-md-offset-1 text-center">
+            <div id="left-hand-feedback" class="col-xs-2 col-md-offset-1 text-center">
                 <h4>A</h4>
                 <p>Box appears in same location</p>
             </div>
@@ -145,9 +145,9 @@
                 </div>
             </div>
 
-            <div class="col-xs-2 col-md-offset-1 text-center">
+            <div id="right-hand-feedback" class="col-xs-2 col-md-offset-1 text-center">
                 <h4>L</h4>
-                <p>When same letter is said</p>
+                <p>When the same letter is said</p>
             </div>
         </div>
 
@@ -160,6 +160,19 @@
 
     </div>
     <!-- /.container -->
+
+    <!-- audio -->
+    <audio src="audio/letter1.mp3" id="letter1">
+        <p>Your browser doesn't support audio, upgrade to do NBack testing.</p>
+    </audio>
+    <audio src="audio/letter2.mp3" id="letter2"></audio>
+    <audio src="audio/letter3.mp3" id="letter3"></audio>
+    <audio src="audio/letter4.mp3" id="letter4"></audio>
+    <audio src="audio/letter5.mp3" id="letter5"></audio>
+    <audio src="audio/letter6.mp3" id="letter6"></audio>
+    <audio src="audio/letter7.mp3" id="letter7"></audio>
+    <audio src="audio/letter8.mp3" id="letter8"></audio>
+
 
     <!-- jQuery Version 1.11.1 -->
     <script src="js/jquery.js"></script>

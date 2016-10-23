@@ -25,6 +25,17 @@ function Page() {
 	// keeps track of the user's score
 	this._score = new Score();
 
+    // set to true whenever the game is running
+    this._playingGame = false;
+
+    // timers - from Page.xaml
+    // initial wait - gap before the trial starts so the user can get ready
+    // Timer_1 - for the stimulus, i.e. the square highlights
+    // TrialTimer - total trial time, trial is ended when completed
+    this.initialWait;
+    this.Timer_1;
+    this.TrialTimer;
+
 
 	DisplayN(this._starting_N);
  	//square.Opacity = 0;
@@ -87,7 +98,7 @@ function Page() {
             // original timer = 675 * 10000 (675ms)
             // in setTimeout() the delay is in milliseconds
             // 'this' in an event handler is the object that fired the event
-            window.setTimeout(self.Start_Training, 675);
+            self.initialWait = window.setTimeout(self.Start_Training, 675);
         } else if(event.target.value == "Pause") {
             event.target.value = "Start";
             event.target.textContent = "Start";
@@ -112,9 +123,11 @@ function Page() {
     //     //NText.Text = _n.ToString();
     //}
 
-    // UserControl_KeyDown() {
-    	//_score.recordButtonPress(key_press_value)
-    //}
+    document.addEventListener("keyup", function(event) {
+      if(self._playingGame === true) {
+        self._score.recordButtonPress(event.key);
+      }
+    }, false);
 
     // ContinueButton_Click() {
     //     EndBlockPopup.IsOpen = false;
@@ -153,82 +166,65 @@ function Page() {
     //     m.Position = TimeSpan.FromMilliseconds(0);
     // }
 
+
+    // FUNCTIONS
     // callback for when the timer expires for the stimulus, hide the stimulus
-    //this.hideStimulus() {
-    	//FadeBoxOut.Begin();
-    //}
+    this.hideStimulus = function() {
+    	// just clear all grid squares for ease
+        document.getElementById("bottom-left").style.backgroundColor = "";
+        document.getElementById("bottom-middle").style.backgroundColor = "";
+        document.getElementById("bottom-right").style.backgroundColor = "";
+        document.getElementById("middle-left").style.backgroundColor = "";
+        document.getElementById("middle-right").style.backgroundColor = "";
+        document.getElementById("top-left").style.backgroundColor = "";
+        document.getElementById("top-middle").style.backgroundColor = "";
+        document.getElementById("top-right").style.backgroundColor = "";
+    }
 
 
-
- 	// FUNCTIONS
  	this.Start_Training = function() {
-        alert("Started Training!");
-
         var blockCreator = new BlockCreator();
 
- 		_playingGame = true;
-
- 		//Set the stimulus fade-out timer
-        //this.Timer_1.Duration = new Duration(new TimeSpan(_stimulus_time * 10000));
-        //this.Timer_1.Completed += new EventHandler(hideStimulus);
-
-        ////Set the trial time-out timer
-        //TrialTimer.Duration = new Duration(new TimeSpan(_total_trial_time * 10000));
-        //TrialTimer.Completed += new EventHandler(trialTimeUp);
+ 		self._playingGame = true;
 
         _score = new Score();
         //_score.HandleTrialOutcome += handleTrialResult;
         //_score.HandleScores += handleScores;
 
         // we're starting, get the list of trials and clear the extra stuff
-        _n = self._starting_N;
-        _blockNum = 0;
-        _trialNum = 0;
-        //m_Trials = BlockCreator.createBlock(_n);
-        m_Trials = blockCreator.createBlock(_n);
-        _score.startBlock(_n);
+        self._n = self._starting_N;
+        self._blockNum = 0;
+        self._trialNum = 0;
+        self.m_Trials = blockCreator.createBlock(self._n);
+        _score.startBlock(self._n);
 
         // present the first trial to the user
-        self.presentTrialInfoToUser(m_Trials[_trialNum]);
-        _score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget);
+        self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
+        _score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget);
 
         // start the timers for the first trial
-        //this.Timer_1.Begin();
-        //TrialTimer.Begin();
- 	}
-
- 	// called via an event to say if there was a trial success or failure
- 	this.handleTrialResult = function(result) {
- 		if(result == TrialResult.Visual_Success) {
- 			Left_Success.Begin();
- 		} else if(result == TrialResult.Visual_Failure) {
- 			Left_Failure.Begin();
- 		}
- 		if(result == TrialResult.Audio_Success) {
- 			Right_Success.Begin();
- 		} else if(result == TrialResult.Audio_Failure) {
- 			Right_Failure.Begin();
- 		}
+        self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
  	}
 
  	// called whenever the total time for an individual trial has expired
  	this.trialTimeUp = function() {
- 		_score.endTrial();
- 		_trialNum++;
+ 		self._score.endTrial();
+ 		self._trialNum++;
 
- 		var progress = _trialNum / m_Trials.length;
- 		//ProgBar.setProgress(progress * 100);
+ 		var progress = self._trialNum / self.m_Trials.length;
+ 		setProgress(progress * 100);
 
  		// are we at the end of a block?
- 		if(_trialNum >= m_Trials.length) {
+ 		if(self._trialNum >= self.m_Trials.length) {
  			// are we at the end of an entire session (20 blocks)?
- 			if(_blockNum == (BlockCreator.num_Blocks_Total - 1)) {
+ 			if(self._blockNum == (BlockCreator.num_Blocks_Total - 1)) {
  				// what was the average n level?
- 				var averageN = _score.getMeanN();
+ 				var averageN = self._score.getMeanN();
  				// output to screen....
 
- 				if(_score.getPercentGFIncrease() > 0) {
- 					var gFIncrease = _score.getPercentGFIncrease();
+ 				if(self._score.getPercentGFIncrease() > 0) {
+ 					var gFIncrease = self._score.getPercentGFIncrease();
  					// output to screen...
  				}
 
@@ -241,14 +237,15 @@ function Page() {
  			}
 
  			// end the block
- 			// output audio targets text...
- 			// output visual targets text...
- 			var deltaN = _score.endBlock();
- 			if((deltaN + _n) >= 2) {
- 				_n = _n + deltaN;
+            // output results
+            // AudioTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size-_score.audioMistakes,BlockCreator.default_Block_Size);
+            // VisualTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size - _score.visualMistakes, BlockCreator.default_Block_Size);
+ 			var deltaN = self._score.endBlock();
+ 			if((deltaN + self._n) >= 2) {
+ 				self._n = self._n + deltaN;
  			}
 
- 			// display the dialog
+ 			// display the next trial level (N number) in the popup
  			//NumberBack.Text = _n.ToString();
 
  			//Position pop-ups
@@ -261,22 +258,26 @@ function Page() {
  		}
 
  		// start a new trial
- 		_score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget());
- 		self.presentTrialInfoToUser(m_Trials[_trialNum]);
+ 		self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget());
+ 		self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
 
- 		//Timer_1.Begin();
- 		//TrialTimer.Begin();
+ 		self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
  	}
 
  	this.startBlock = function() {
  		// start a new trial
- 		_score.startNewTrial(m_Trials[_trialNum].GetSecondTrialInTarget());
- 		self.presentTrialInfoToUser(m_Trials[_trialNum]);
+ 		self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget());
+ 		self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
 
  		//Timer_1.Seek(new TimeSpan(0));
+        window.clearTimeout(self.Timer_1);
  		//TrailTimer.Seek(new TimeSpan(0));
+        window.clearTimeout(self.TrialTimer);
  		//Timer_1.Begin();
  		//TrialTimer.Begin();
+        self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
  	}
 
  	this.handleScores = function(totalCorrect, totalScore) {
@@ -287,35 +288,35 @@ function Page() {
  	this.presentTrialInfoToUser = function(t) {
  		switch(t.GetLetter()) {
  			case Consonant.Letter1:
- 				// play audio...
+ 				document.getElementById("letter1").play();
  				break;
 
 			case Consonant.Letter2:
- 				// play audio...
+ 				document.getElementById("letter2").play();
  				break;
 
 			case Consonant.Letter3:
- 				// play audio...
+ 				document.getElementById("letter3").play();
  				break;
 
 			case Consonant.Letter4:
- 				// play audio...
+ 				document.getElementById("letter4").play();
  				break;
 
 			case Consonant.Letter5:
- 				// play audio...
+ 				document.getElementById("letter5").play();
  				break;
 
 			case Consonant.Letter6:
- 				// play audio...
+ 				document.getElementById("letter6").play();
  				break;
 
 			case Consonant.Letter7:
- 				// play audio...
+ 				document.getElementById("letter7").play();
  				break;
 
 			case Consonant.Letter8:
- 				// play audio...
+ 				document.getElementById("letter8").play();
  				break;
 
 			default:
@@ -323,55 +324,59 @@ function Page() {
  		}
 
  		// display the visual information
- 		var iColumn = 0;
- 		var iRow = 0;
  		switch(t.GetPosition()) {
  			case SquarePosition.BottomLeft:
- 				iColumn = 0;
- 				iRow = 2;
+ 				document.getElementById("bottom-left").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.BottomMiddle:
- 				iColumn = 1;
- 				iRow = 2;
+ 				document.getElementById("bottom-middle").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.BottomRight:
- 				iColumn = 2;
- 				iRow = 2;
+ 				document.getElementById("bottom-right").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.MiddleLeft:
- 				iColumn = 0;
- 				iRow = 1;
+ 				document.getElementById("middle-left").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.MiddleRight:
- 				iColumn = 2;
- 				iRow = 1;
+ 				document.getElementById("middle-right").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.TopLeft:
- 				iColumn = 0;
- 				iRow = 0;
+ 				document.getElementById("top-left").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.TopMiddle:
- 				iColumn = 1;
- 				iRow = 0;
+ 				document.getElementById("top-middle").style.backgroundColor = "orange";
  				break;
 
 			case SquarePosition.TopRight:
- 				iColumn = 2;
- 				iRow = 0;
+ 				document.getElementById("top-right").style.backgroundColor = "orange";
  				break;
 
 			default:
  				break;
  		}
-
- 		// highlight appropriate grid square...
  	}
+}
+
+// called via an event to say if there was a trial success or failure
+// highlights the left/right areas of the grid for success/failure feedback
+// Page & Score access need access to this function
+function handleTrialResult(result) {
+    if(result == TrialResult.Visual_Success) {
+        document.getElementById("left-hand-feedback").style.backgroundColor = "green";
+    } else if(result == TrialResult.Visual_Failure) {
+        document.getElementById("left-hand-feedback").style.backgroundColor = "red";
+    }
+    if(result == TrialResult.Audio_Success) {
+        document.getElementById("right-hand-feedback").style.backgroundColor = "green";
+    } else if(result == TrialResult.Audio_Failure) {
+        document.getElementById("right-hand-feedback").style.backgroundColor = "red";
+    }
 }
 
 

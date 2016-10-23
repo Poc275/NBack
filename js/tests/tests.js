@@ -1,8 +1,65 @@
 // Page tests
-QUnit.test("Page class tests", function(assert) {
+QUnit.test("Page class timing tests", function(assert) {
 	var page = new Page();
+	var blockCreator = new BlockCreator();
+	var trials = blockCreator.createBlock(2);
+
+	page.m_Trials = trials;
+
+	// end of trial/block tests
+	assert.deepEqual(page._trialNum, 0, "trial number initialised correctly");
+	page.trialTimeUp();
+	assert.deepEqual(page._trialNum, 1, "trial number increments correctly");
+	assert.deepEqual(document.getElementById("prog-bar").style.width, "4.54545%", "Progress bar increments correctly");
+});
+
+QUnit.test("Page class feedback tests", function(assert) {
+	var page = new Page();
+	var position = SquarePosition.BottomMiddle;
+	var consonant = Consonant.Letter2;
+	var trial = new Trial(position, consonant);
+
+	// grid square highlight test
+	assert.deepEqual(document.getElementById("bottom-middle").style.backgroundColor, "", "square is blank before it gets highlighted");
+	page.presentTrialInfoToUser(trial);
+	assert.deepEqual(document.getElementById("bottom-middle").style.backgroundColor, "orange", "correct square gets highlighted");
+
+	page.hideStimulus();
+	assert.deepEqual(document.getElementById("bottom-left").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("bottom-middle").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("bottom-right").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("middle-left").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("middle-right").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("top-left").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("top-middle").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+    assert.deepEqual(document.getElementById("top-right").style.backgroundColor, "", "hideStimulus() clears grid correctly");
+
+	// success/failure feedback tests
+	var result = TrialResult.Visual_Success;
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "", "visual feedback correct before result");
+	handleTrialResult(result);
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "green", "visual success feedback correct");
+
+	result = TrialResult.Visual_Failure;
+	handleTrialResult(result);
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "red", "visual failure feedback correct");
+
+	result = TrialResult.Audio_Success;
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "", "audio feedback correct before result");
+	handleTrialResult(result);
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "green", "audio success feedback correct");
+
+	result = TrialResult.Audio_Failure;
+	handleTrialResult(result);
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "red", "audio success feedback correct");
+});
+
+QUnit.test("Page class basic tests", function(assert) {
+	var page = new Page();
+	var startButton = $('#start-button');
 
 	assert.ok(page instanceof Page, "Constructor instantiates ok");
+	assert.notOk(page._playingGame, "game is not playing until start button is clicked");
 	assert.deepEqual(document.getElementById("N1").style.display, "inline-block", "N Back 1 is visible at the start of a new trial");
 	assert.deepEqual(document.getElementById("N2").style.display, "inline-block", "N Back 2 is visible at the start of a new trial");
 	assert.deepEqual(document.getElementById("N3").style.display, "none", "N Back 3 is NOT visible at the start of a new trial");
@@ -13,6 +70,20 @@ QUnit.test("Page class tests", function(assert) {
 
 	assert.deepEqual(document.getElementById("prog-bar").style.width, "0%", "Progress bar is initialised to 0%");
 
+	assert.deepEqual(startButton.val(), "Start", "Start button is initialised correctly");
+	assert.deepEqual(startButton.text(), "Start", "Start button is initialised correctly");
+
+	// trigger a start button click event
+	startButton.trigger('click');
+	assert.deepEqual(startButton.val(), "Pause", "Start button changes to a pause button on click");
+	assert.deepEqual(startButton.text(), "Pause", "Start button changes to a pause button on click");
+
+	// game will not be playing until after initial wait timer is complete
+	var done = assert.async();
+	setTimeout(function() {
+		assert.ok(page._playingGame, "game is not playing until start button is clicked");
+		done();
+	}, 700);
 });
 
 // Progress bar tests
@@ -171,6 +242,10 @@ QUnit.test("Block creator class tests", function(assert) {
 	var nAudioTargets = 0;
 	var nVisualTargets = 0;
 	var nBothTargets = 0;
+	var t = blockCreator.getRandomTrial();
+
+	assert.ok(t.GetPosition() >= 0 && t.GetPosition() <= 7, "getRandomTrial() returns a correct Trial object");
+	assert.ok(t.GetLetter() >= 0 && t.GetLetter() <= 7, "getRandomTrial() returns a correct Trial object");
 
 	targets.forEach(function(el) {
 		if(el.Value === TargetKind.Audio) {
@@ -189,6 +264,11 @@ QUnit.test("Block creator class tests", function(assert) {
 
 	assert.deepEqual(trials[0].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
 	assert.deepEqual(trials[1].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
+
+	trials.forEach(function(t) {
+		assert.notDeepEqual(t.GetPosition(), undefined, "individual trials in the block are instantiated correctly");
+		assert.notDeepEqual(t.GetLetter(), undefined, "individual trials in the block are instantiated correctly");
+	});
 
 	assert.deepEqual(typeof(randTargetLoc), "number", "getRandomTargetLocation() returns a number");
 	assert.ok(randTargetLoc > 0, "getRandomTargetLocation() returns a number greater than 0");
@@ -226,6 +306,33 @@ QUnit.test("Trial class tests", function(assert) {
 	assert.deepEqual(trial.GetLetter(), Consonant.Letter5, "setters return correct values");
 	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.Visual, "setters return correct values");
 
+});
+
+
+// enum indexer utility functions tests
+QUnit.test("Enums utility functions tests", function(assert) {
+	assert.deepEqual(squarePositionIndexer(0), SquarePosition.TopLeft, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(1), SquarePosition.TopMiddle, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(2), SquarePosition.TopRight, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(3), SquarePosition.MiddleRight, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(4), SquarePosition.BottomRight, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(5), SquarePosition.BottomMiddle, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(6), SquarePosition.BottomLeft, "utility SquarePosition indexer function works correctly");
+	assert.deepEqual(squarePositionIndexer(7), SquarePosition.MiddleLeft, "utility SquarePosition indexer function works correctly");
+
+	assert.deepEqual(consonantIndexer(0), Consonant.Letter1, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(1), Consonant.Letter2, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(2), Consonant.Letter3, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(3), Consonant.Letter4, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(4), Consonant.Letter5, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(5), Consonant.Letter6, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(6), Consonant.Letter7, "utility Consonant indexer function works correctly");
+	assert.deepEqual(consonantIndexer(7), Consonant.Letter8, "utility Consonant indexer function works correctly");
+
+	assert.deepEqual(squarePositionIndexer(-1), undefined, "incorrect indexes handled correctly");
+	assert.deepEqual(squarePositionIndexer(8), undefined, "incorrect indexes handled correctly");
+	assert.deepEqual(consonantIndexer(-1), undefined, "incorrect indexes handled correctly");
+	assert.deepEqual(consonantIndexer(8), undefined, "incorrect indexes handled correctly");
 });
 
 

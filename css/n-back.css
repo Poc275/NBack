@@ -1,7 +1,8 @@
 .cell {
 	border: 1px solid #fff;
-	background-color: orange;
+	/*background-color: orange;*/
 	padding: 50px;
+	height: 150px;
 }
 
 .n-grid {
@@ -22,4 +23,15 @@
 
 .progress-bar {
 	width: 0%;
+}
+
+#left-hand-feedback,
+#right-hand-feedback {
+	border: 5px solid #808080;
+	border-radius: 5px;
+}
+
+#left-hand-feedback h4,
+#right-hand-feedback h4 {
+	font-weight: bold;
 }

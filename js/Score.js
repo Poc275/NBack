@@ -1,5 +1,7 @@
 // Class that keeps track of the user's score
 function Score() {
+	var self = this;
+
 	this._target = TargetKind.None;
 	this._n = 0;
 	this._nValues = [];
@@ -29,33 +31,33 @@ function Score() {
 	// FUNCTIONS
 	// start a new trial and give the correct answer
 	this.startNewTrial = function(correctAnswer) {
-		_target = correctAnswer;
+		this._target = correctAnswer;
 	}
 
 	// the user has pressed a button
 	this.recordButtonPress = function(guess) {
 		switch(guess) {
-			case 'A':
-				if(_visualKeyPressed == true) {
+			case 'a':
+				if(self._visualKeyPressed == true) {
 					return;
 				}
-				if((_target == TargetKind.Visual) || (_target == TargetKind.Both)) {
-					HandleTrialOutcome(TrialResult.Visual_Success);
+				if((self._target == TargetKind.Visual) || (self._target == TargetKind.Both)) {
+					handleTrialResult(TrialResult.Visual_Success);
 				} else {
-					HandleTrialOutcome(TrialResult.Visual_Failure);
-					_visualKeyPressed = true;
+					handleTrialResult(TrialResult.Visual_Failure);
+					self._visualKeyPressed = true;
 				}
 				break;
 
-			case 'L':
-				if(_audioKeyPressed == true) {
+			case 'l':
+				if(self._audioKeyPressed == true) {
 					return;
 				}
-				if((_target == TargetKind.Audio) || (_target == TargetKind.Both)) {
-					HandleTrialOutcome(TrialResult.Audio_Success);
+				if((self._target == TargetKind.Audio) || (self._target == TargetKind.Both)) {
+					handleTrialResult(TrialResult.Audio_Success);
 				} else {
-					HandleTrialOutcome(TrialResult.Audio_Failure);
-					_audioKeyPressed = true;
+					handleTrialResult(TrialResult.Audio_Failure);
+					self._audioKeyPressed = true;
 				}
 				break;
 
@@ -66,11 +68,11 @@ function Score() {
 
 	this.endTrial = function() {
 		// ignore any key presses that come early in the list (before a pair could exist)
-		if(_target == TargetKind.TooEarly) {
+		if(this._target == TargetKind.TooEarly) {
 			// clear the members
-			_target = TargetKind.None;
-			_audioKeyPressed = false;
-			_visualKeyPressed = false;
+			this._target = TargetKind.None;
+			this._audioKeyPressed = false;
+			this._visualKeyPressed = false;
 
 			return;
 		}
@@ -78,66 +80,66 @@ function Score() {
 		// set to true if the user got a trial completely correct
 		var correctTrial = false;
 
-		if(_target == TargetKind.None) {
-			if(_audioKeyPressed) {
-				_audioMistakesPerBlock++;
+		if(this._target == TargetKind.None) {
+			if(this._audioKeyPressed) {
+				this._audioMistakesPerBlock++;
 			}
-			if(_visualKeyPressed) {
-				_visualMistakesPerBlock++;
-			}
-
-			if((_audioKeyPressed == false) && (_visualKeyPressed == false)) {
-				correctTrial = true;
-			}
-		} else if(_target == TargetKind.Both) {
-			if(_audioKeyPressed != true) {
-				_audioMistakesPerBlock++;
-			}
-			if(_visualKeyPressed != true) {
-				_visualMistakesPerBlock++;
+			if(this._visualKeyPressed) {
+				this._visualMistakesPerBlock++;
 			}
 
-			if((_audioKeyPressed == true) || (_visualKeyPressed == true)) {
+			if((this._audioKeyPressed == false) && (this._visualKeyPressed == false)) {
 				correctTrial = true;
 			}
-		} else if(_target == TargetKind.Audio) {
-			if(_audioKeyPressed != true) {
+		} else if(this._target == TargetKind.Both) {
+			if(this._audioKeyPressed != true) {
+				this._audioMistakesPerBlock++;
+			}
+			if(this._visualKeyPressed != true) {
+				this._visualMistakesPerBlock++;
+			}
+
+			if((this._audioKeyPressed == true) || (this._visualKeyPressed == true)) {
+				correctTrial = true;
+			}
+		} else if(this._target == TargetKind.Audio) {
+			if(this._audioKeyPressed != true) {
 				// user didn't press audio key
-				_audioMistakesPerBlock++;
+				this._audioMistakesPerBlock++;
 			}
-			if(_visualKeyPressed == true) {
-				_visualMistakesPerBlock++;
+			if(this._visualKeyPressed == true) {
+				this._visualMistakesPerBlock++;
 			}
 
-			if((_audioKeyPressed == true) && (_visualKeyPressed != true)) {
+			if((this._audioKeyPressed == true) && (this._visualKeyPressed != true)) {
 				correctTrial = true;
 			}
-		} else if(_target == TargetKind.Visual) {
-			if(_audioKeyPressed == true) {
-				_audioMistakesPerBlock++;
+		} else if(this._target == TargetKind.Visual) {
+			if(this._audioKeyPressed == true) {
+				this._audioMistakesPerBlock++;
 			}
-			if(_visualKeyPressed != true) {
+			if(this._visualKeyPressed != true) {
 				// user didn't press the visual key
-				_visualMistakesPerBlock++;
+				this._visualMistakesPerBlock++;
 			}
 
-			if((_audioKeyPressed != true) && (_visualKeyPressed == true)) {
+			if((this._audioKeyPressed != true) && (this._visualKeyPressed == true)) {
 				correctTrial = true;
 			}
 		}
 
 		if(correctTrial == true) {
-			_TotalCorrect++;
-			_score += _n;
+			this._TotalCorrect++;
+			this._score += this._n;
 		}
 
 		// update display
-		HandleScores(_TotalCorrect, _score);
+		//HandleScores(this._TotalCorrect, this._score);
 
 		// clear the members
-		_target = TargetKind.None;
-		_audioKeyPressed = false;
-		_visualKeyPressed = false;
+		this._target = TargetKind.None;
+		this._audioKeyPressed = false;
+		this._visualKeyPressed = false;
 	}
 
 	// called when a block is started

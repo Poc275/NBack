@@ -132,7 +132,7 @@ function BlockCreator() {
 
 		do {
 			var rand = Math.floor((Math.random() * SquarePosition.MiddleLeft) + 1);
-			s = SquarePosition[rand];
+			s = squarePositionIndexer(rand);
 			if(s != noMatch.GetPosition()) {
 				break;
 			}
@@ -140,7 +140,7 @@ function BlockCreator() {
 
 		do {
 			var rand = Math.floor((Math.random() * Consonant.Letter8) + 1);
-			c = Consonant[rand];
+			c = consonantIndexer(rand);
 			if(c != noMatch.GetLetter()) {
 				break;
 			}
@@ -153,12 +153,101 @@ function BlockCreator() {
 	// get a completely random trial
 	this.getRandomTrial = function() {
 		var rand = Math.floor((Math.random() * SquarePosition.MiddleLeft) + 1);
-		var s = SquarePosition[rand];
+		var s = squarePositionIndexer(rand);
 
 		rand = Math.floor((Math.random() * Consonant.Letter8) + 1);
-		c = Consonant[rand];
+		c = consonantIndexer(rand);
 
 		var t = new Trial(s, c);
 		return t;
 	}
+}
+
+
+// utility functions for JS enums that returns the correct member from an index
+function squarePositionIndexer(i) {
+	var pos;
+
+	switch(i) {
+		case 0:
+			pos = SquarePosition.TopLeft;
+			break;
+
+		case 1:
+			pos = SquarePosition.TopMiddle;
+			break;
+
+		case 2:
+			pos = SquarePosition.TopRight;
+			break;
+
+		case 3:
+			pos = SquarePosition.MiddleRight;
+			break;
+
+		case 4:
+			pos = SquarePosition.BottomRight;
+			break;
+
+		case 5:
+			pos = SquarePosition.BottomMiddle;
+			break;
+
+		case 6:
+			pos = SquarePosition.BottomLeft;
+			break;
+
+		case 7:
+			pos = SquarePosition.MiddleLeft;
+			break;
+
+		default:
+			break;
+	}
+
+	return pos;
+}
+
+
+function consonantIndexer(i) {
+	var consonant;
+
+	switch(i) {
+		case 0:
+			consonant = Consonant.Letter1;
+			break;
+
+		case 1:
+			consonant = Consonant.Letter2;
+			break;
+
+		case 2:
+			consonant = Consonant.Letter3;
+			break;
+
+		case 3:
+			consonant = Consonant.Letter4;
+			break;
+
+		case 4:
+			consonant = Consonant.Letter5;
+			break;
+
+		case 5:
+			consonant = Consonant.Letter6;
+			break;
+
+		case 6:
+			consonant = Consonant.Letter7;
+			break;
+
+		case 7:
+			consonant = Consonant.Letter8;
+			break;
+
+		default:
+			break;
+	}
+
+	return consonant;
 }
