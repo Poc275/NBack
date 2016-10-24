@@ -81,15 +81,6 @@ function Page() {
 
     //}
 
-    // StartButton_Click() {
-    //     //change the start button into a pause button.
-    //     StartButton.Click -= StartButton_Click;
-    //     StartButton.Content = "Pause";
-    //     StartButton.Click += PauseButton_Click;
-
-    //     //Start our timer which calls back to start the application.
-    //     InitialWait.Begin();
-    //}
     startButton.addEventListener('click', function(event) {
         // check for start/pause via changing the text value of the button itself
         if(event.target.value == "Start") {
@@ -211,6 +202,12 @@ function Page() {
  	this.trialTimeUp = function() {
  		self._score.endTrial();
  		self._trialNum++;
+
+        // clear feedback boxes
+        // TODO - should be handled with an animation so the boxes
+        // are only shaded for a brief period, fade-in-out
+        document.getElementById("left-hand-feedback").style.backgroundColor = "";
+        document.getElementById("right-hand-feedback").style.backgroundColor = "";
 
  		var progress = self._trialNum / self.m_Trials.length;
  		setProgress(progress * 100);
@@ -362,6 +359,12 @@ function Page() {
  		}
  	}
 }
+
+
+function handleScores(totalScore) {
+    document.getElementById("score-text").textContent = totalScore.toString();
+}
+
 
 // called via an event to say if there was a trial success or failure
 // highlights the left/right areas of the grid for success/failure feedback

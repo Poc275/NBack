@@ -13,6 +13,7 @@ QUnit.test("Page class timing tests", function(assert) {
 	assert.deepEqual(document.getElementById("prog-bar").style.width, "4.54545%", "Progress bar increments correctly");
 });
 
+
 QUnit.test("Page class feedback tests", function(assert) {
 	var page = new Page();
 	var position = SquarePosition.BottomMiddle;
@@ -54,6 +55,7 @@ QUnit.test("Page class feedback tests", function(assert) {
 	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "red", "audio success feedback correct");
 });
 
+
 QUnit.test("Page class basic tests", function(assert) {
 	var page = new Page();
 	var startButton = $('#start-button');
@@ -86,6 +88,7 @@ QUnit.test("Page class basic tests", function(assert) {
 	}, 700);
 });
 
+
 // Progress bar tests
 QUnit.test("Progress bar function tests", function(assert) {
 	var progressBar = document.getElementById("prog-bar");
@@ -98,6 +101,204 @@ QUnit.test("Progress bar function tests", function(assert) {
 	setProgress(50);
 	assert.deepEqual(progressBar.style.width, "50%", "Progress bar is set correctly");
 });
+
+
+// Score tests
+QUnit.test("Score class tests", function(assert) {
+	var score = new Score();
+	var abortedScore = [];
+	var badScore = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
+	var averageScore = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
+
+	score.startBlock(2);
+
+	assert.ok(score instanceof Score, "Constructor instantiates ok");
+	assert.deepEqual(score.audioMistakes(), 0, "instantiated with 0 audio mistakes");
+	assert.deepEqual(score.visualMistakes(), 0, "instantiated with 0 visual mistakes");
+
+	score.startNewTrial(TargetKind.Both)
+	assert.deepEqual(score._target, TargetKind.Both, "start new trial registers correct answer");
+
+	score._nValues = abortedScore;
+	assert.deepEqual(score.getMeanN(), 0, "an aborted test has a meanN of 0");
+	assert.deepEqual(score.getPercentGFIncrease(), 0, "an aborted test has a 0% increase");
+
+	score._nValues = badScore;
+	assert.deepEqual(score.getMeanN(), 2, "a completely failed test has a meanN of 2");
+	assert.deepEqual(score.getPercentGFIncrease(), 0, "a completely failed test has a 0% increase");
+
+	score._nValues = averageScore;
+	assert.deepEqual(score.getMeanN(), 4, "a sample test has a meanN of 4");
+	// custom assertion for floats
+	// 3rd argument is the tolerance
+	assert.close(score.getPercentGFIncrease(), 1.45869, 0.00001, "a sample test has a 1.46% increase");
+
+	score._audioMistakesPerBlock = 7;
+	score._visualMistakesPerBlock = 6;
+	assert.deepEqual(score.endBlock(), -1, "a test with more than 5 combined mistakes results in n back - 1");
+
+	score._audioMistakesPerBlock = 1;
+	score._visualMistakesPerBlock = 2;
+	assert.deepEqual(score.endBlock(), 1, "a test with less than 3 visual and audio mistakes results in n back + 1");
+
+	score._audioMistakesPerBlock = 4;
+	score._visualMistakesPerBlock = 1;
+	assert.deepEqual(score.endBlock(), 0, "a test with 5 combined mistakes results in n back of 0");
+
+	score._target = TargetKind.TooEarly;
+	score.endTrial();
+	assert.deepEqual(score._target, TargetKind.None, "a target kind of too early doesn't score");
+	assert.notOk(score._audioKeyPressed, "audio/visual key press flags are reset after a score is checked");
+	assert.notOk(score._visualKeyPressed, "audio/visual key press flags are reset after a score is checked");
+
+	score._target = TargetKind.None;
+	score._audioKeyPressed = true;
+	score._visualKeyPressed = true;
+	score.endTrial();
+	assert.deepEqual(score._audioMistakesPerBlock, 1, "a target of none results in a mistake if the audio key is pressed");
+	assert.deepEqual(score._visualMistakesPerBlock, 1, "a target of none results in a mistake if the visual key is pressed");
+	score._audioKeyPressed = false;
+	score._visualKeyPressed = false;
+	score.endTrial();
+	assert.deepEqual(score._TotalCorrect, 1, "score is updated on a successful trial");
+	assert.deepEqual(document.getElementById("score-text").textContent, score._score.toString(), "score is updated in display");
+
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "", "feedback boxes are blank when starting a trial");
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "", "feedback boxes are blank when starting a trial");
+
+	score._target = TargetKind.Visual;
+	score.recordButtonPress('a');
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "green", "visual trial is correct when the 'a' key is pressed");
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "", "audio feedback not modified on a visual trial");
+	score.recordButtonPress('l');
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "red", "visual trial is incorrect when the 'l' key is pressed");
+
+	// clear feedback for next test - this will be handled in Page.trialTimeUp() but for testing, do it here
+	document.getElementById("left-hand-feedback").style.backgroundColor = "";
+	document.getElementById("right-hand-feedback").style.backgroundColor = "";
+	score._visualKeyPressed = false;
+	score._audioKeyPressed = false;
+
+	score._target = TargetKind.Audio;
+	score.recordButtonPress('a');
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "red", "audio trial is incorrect when the 'a' key is pressed");
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "", "visual feedback not modified on an audio trial");
+	score.recordButtonPress('l');
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "green", "audio trial is correct when the 'l' key is pressed");
+
+	// clear feedback for next test - this will be handled in Page.trialTimeUp() but for testing, do it here
+	document.getElementById("left-hand-feedback").style.backgroundColor = "";
+	document.getElementById("right-hand-feedback").style.backgroundColor = "";
+	score._visualKeyPressed = false;
+	score._audioKeyPressed = false;
+
+	score._target = TargetKind.Both;
+	score.recordButtonPress('a');
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "green", "both feedbacks are green when a trial of both is presented");
+	score.recordButtonPress('l');
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "green", "both feedbacks are green when a trial of both is presented");
+
+	// clear feedback for next test - this will be handled in Page.trialTimeUp() but for testing, do it here
+	document.getElementById("left-hand-feedback").style.backgroundColor = "";
+	document.getElementById("right-hand-feedback").style.backgroundColor = "";
+	score._visualKeyPressed = false;
+	score._audioKeyPressed = false;
+
+	score._target = TargetKind.None;
+	score.recordButtonPress('a');
+	score.recordButtonPress('l');
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "red", "both feedbacks are red when a trial of none is presented");
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "red", "both feedbacks are red when a trial of none is presented");
+
+	// clear feedback for next test - this will be handled in Page.trialTimeUp() but for testing, do it here
+	document.getElementById("left-hand-feedback").style.backgroundColor = "";
+	document.getElementById("right-hand-feedback").style.backgroundColor = "";
+	score._visualKeyPressed = false;
+	score._audioKeyPressed = false;
+
+	score._target = TargetKind.Audio;
+	score.recordButtonPress('A');
+	score.recordButtonPress('L');
+	assert.deepEqual(document.getElementById("left-hand-feedback").style.backgroundColor, "", "upper case letters do not work");
+	assert.deepEqual(document.getElementById("right-hand-feedback").style.backgroundColor, "", "upper case letters do not work");
+});
+
+
+// Block creator tests
+QUnit.test("Block creator class tests", function(assert) {
+	var blockCreator = new BlockCreator();
+	var trials = blockCreator.createBlock(2);
+	var randTargetLoc = blockCreator.getRandomTargetLocation([]);
+	var targets = blockCreator.getTargets();
+	var nAudioTargets = 0;
+	var nVisualTargets = 0;
+	var nBothTargets = 0;
+	var t = blockCreator.getRandomTrial();
+
+	assert.ok(t.GetPosition() >= 0 && t.GetPosition() <= 7, "getRandomTrial() returns a correct Trial object");
+	assert.ok(t.GetLetter() >= 0 && t.GetLetter() <= 7, "getRandomTrial() returns a correct Trial object");
+
+	targets.forEach(function(el) {
+		if(el.Value === TargetKind.Audio) {
+			nAudioTargets++;
+		} else if(el.Value === TargetKind.Visual) {
+			nVisualTargets++;
+		} else if (el.Value === TargetKind.Both) {
+			nBothTargets++;
+		}
+	});
+
+	assert.ok(blockCreator instanceof BlockCreator, "Constructor instantiates ok");
+
+	assert.deepEqual(trials.length, 22, "createBlock() creates array of correct length");
+	assert.ok(trials[0] instanceof Trial, "createBlock() creates array of Trial objects");
+
+	assert.deepEqual(trials[0].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
+	assert.deepEqual(trials[1].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
+
+	trials.forEach(function(t) {
+		assert.notDeepEqual(t.GetPosition(), undefined, "individual trials in the block are instantiated correctly");
+		assert.notDeepEqual(t.GetLetter(), undefined, "individual trials in the block are instantiated correctly");
+	});
+
+	assert.deepEqual(typeof(randTargetLoc), "number", "getRandomTargetLocation() returns a number");
+	assert.ok(randTargetLoc > 0, "getRandomTargetLocation() returns a number greater than 0");
+	assert.ok(randTargetLoc <= 20, "getRandomTargetLocation() returns a number less than or equal to 20");
+	
+	assert.deepEqual(targets.length, 10, "getTargets() returns correct number of trials");
+	assert.deepEqual(nAudioTargets, 4, "we have 4 audio targets");
+	assert.deepEqual(nVisualTargets, 4, "we have 4 visual targets");
+	assert.deepEqual(nBothTargets, 2, "we have 2 both targets");
+	// check targets is sorted by key
+	for(var i = 1; i < targets.length; i++) {
+		assert.ok(targets[i].Key > targets[i - 1].Key, "getTargets() is sorted correctly");
+	}
+});
+
+
+// Trial tests
+QUnit.test("Trial class tests", function(assert) {
+	var position = SquarePosition.BottomMiddle;
+	var consonant = Consonant.Letter2;
+	var trial = new Trial(position, consonant);
+
+	assert.ok(trial instanceof Trial, "Constructor instantiates ok");
+
+	assert.deepEqual(trial.GetPosition(), SquarePosition.BottomMiddle, "getters return correct values");
+	assert.deepEqual(trial.GetLetter(), Consonant.Letter2, "getters return correct values");
+	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.None, "getters return correct values");
+
+	// use setters to change properties and re-test
+	trial.SetPosition(SquarePosition.MiddleLeft);
+	trial.SetLetter(Consonant.Letter5);
+	trial.SetSecondTrialInTarget(TargetKind.Visual);
+
+	assert.deepEqual(trial.GetPosition(), SquarePosition.MiddleLeft, "setters return correct values");
+	assert.deepEqual(trial.GetLetter(), Consonant.Letter5, "setters return correct values");
+	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.Visual, "setters return correct values");
+
+});
+
 
 // N display grid tests
 QUnit.test("N Display grid tests", function(assert) {
@@ -191,121 +392,6 @@ QUnit.test("N Display grid tests", function(assert) {
 	assert.deepEqual(N7.style.display, "inline-block", "N7 visible when N > 7");
 	// if n > 7 then text should be changed accordingly
 	assert.deepEqual(N7.textContent, "10", "N7 changes text accordingly when N > 7");
-});
-
-// Score tests
-QUnit.test("Score class tests", function(assert) {
-	var score = new Score();
-	var abortedScore = [];
-	var badScore = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
-	var averageScore = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
-
-	score.startBlock(2);
-
-	assert.ok(score instanceof Score, "Constructor instantiates ok");
-	assert.deepEqual(score.audioMistakes(), 0, "instantiated with 0 audio mistakes");
-	assert.deepEqual(score.visualMistakes(), 0, "instantiated with 0 visual mistakes");
-
-	score._nValues = abortedScore;
-	assert.deepEqual(score.getMeanN(), 0, "an aborted test has a meanN of 0");
-	assert.deepEqual(score.getPercentGFIncrease(), 0, "an aborted test has a 0% increase");
-
-	score._nValues = badScore;
-	assert.deepEqual(score.getMeanN(), 2, "a completely failed test has a meanN of 2");
-	assert.deepEqual(score.getPercentGFIncrease(), 0, "a completely failed test has a 0% increase");
-
-	score._nValues = averageScore;
-	assert.deepEqual(score.getMeanN(), 4, "a sample test has a meanN of 4");
-	// custom assertion for floats
-	// 3rd argument is the tolerance
-	assert.close(score.getPercentGFIncrease(), 1.45869, 0.00001, "a sample test has a 1.46% increase");
-
-	score._audioMistakesPerBlock = 7;
-	score._visualMistakesPerBlock = 6;
-	assert.deepEqual(score.endBlock(), -1, "a test with more than 5 combined mistakes results in n back - 1");
-
-	score._audioMistakesPerBlock = 1;
-	score._visualMistakesPerBlock = 2;
-	assert.deepEqual(score.endBlock(), 1, "a test with less than 3 visual and audio mistakes results in n back + 1");
-
-	score._audioMistakesPerBlock = 4;
-	score._visualMistakesPerBlock = 1;
-	assert.deepEqual(score.endBlock(), 0, "a test with 5 combined mistakes results in n back of 0");
-});
-
-// Block creator tests
-QUnit.test("Block creator class tests", function(assert) {
-	var blockCreator = new BlockCreator();
-	var trials = blockCreator.createBlock(2);
-	var randTargetLoc = blockCreator.getRandomTargetLocation([]);
-	var targets = blockCreator.getTargets();
-	var nAudioTargets = 0;
-	var nVisualTargets = 0;
-	var nBothTargets = 0;
-	var t = blockCreator.getRandomTrial();
-
-	assert.ok(t.GetPosition() >= 0 && t.GetPosition() <= 7, "getRandomTrial() returns a correct Trial object");
-	assert.ok(t.GetLetter() >= 0 && t.GetLetter() <= 7, "getRandomTrial() returns a correct Trial object");
-
-	targets.forEach(function(el) {
-		if(el.Value === TargetKind.Audio) {
-			nAudioTargets++;
-		} else if(el.Value === TargetKind.Visual) {
-			nVisualTargets++;
-		} else if (el.Value === TargetKind.Both) {
-			nBothTargets++;
-		}
-	});
-
-	assert.ok(blockCreator instanceof BlockCreator, "Constructor instantiates ok");
-
-	assert.deepEqual(trials.length, 22, "createBlock() creates array of correct length");
-	assert.ok(trials[0] instanceof Trial, "createBlock() creates array of Trial objects");
-
-	assert.deepEqual(trials[0].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
-	assert.deepEqual(trials[1].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
-
-	trials.forEach(function(t) {
-		assert.notDeepEqual(t.GetPosition(), undefined, "individual trials in the block are instantiated correctly");
-		assert.notDeepEqual(t.GetLetter(), undefined, "individual trials in the block are instantiated correctly");
-	});
-
-	assert.deepEqual(typeof(randTargetLoc), "number", "getRandomTargetLocation() returns a number");
-	assert.ok(randTargetLoc > 0, "getRandomTargetLocation() returns a number greater than 0");
-	assert.ok(randTargetLoc <= 20, "getRandomTargetLocation() returns a number less than or equal to 20");
-	
-	assert.deepEqual(targets.length, 10, "getTargets() returns correct number of trials");
-	assert.deepEqual(nAudioTargets, 4, "we have 4 audio targets");
-	assert.deepEqual(nVisualTargets, 4, "we have 4 visual targets");
-	assert.deepEqual(nBothTargets, 2, "we have 2 both targets");
-	// check targets is sorted by key
-	for(var i = 1; i < targets.length; i++) {
-		assert.ok(targets[i].Key > targets[i - 1].Key, "getTargets() is sorted correctly");
-	}
-});
-
-
-// Trial tests
-QUnit.test("Trial class tests", function(assert) {
-	var position = SquarePosition.BottomMiddle;
-	var consonant = Consonant.Letter2;
-	var trial = new Trial(position, consonant);
-
-	assert.ok(trial instanceof Trial, "Constructor instantiates ok");
-
-	assert.deepEqual(trial.GetPosition(), SquarePosition.BottomMiddle, "getters return correct values");
-	assert.deepEqual(trial.GetLetter(), Consonant.Letter2, "getters return correct values");
-	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.None, "getters return correct values");
-
-	// use setters to change properties and re-test
-	trial.SetPosition(SquarePosition.MiddleLeft);
-	trial.SetLetter(Consonant.Letter5);
-	trial.SetSecondTrialInTarget(TargetKind.Visual);
-
-	assert.deepEqual(trial.GetPosition(), SquarePosition.MiddleLeft, "setters return correct values");
-	assert.deepEqual(trial.GetLetter(), Consonant.Letter5, "setters return correct values");
-	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.Visual, "setters return correct values");
-
 });
 
 

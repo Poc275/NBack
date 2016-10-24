@@ -134,7 +134,7 @@ function Score() {
 		}
 
 		// update display
-		//HandleScores(this._TotalCorrect, this._score);
+		handleScores(this._score);
 
 		// clear the members
 		this._target = TargetKind.None;
