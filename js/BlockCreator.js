@@ -22,28 +22,25 @@ function BlockCreator() {
 
 		for(var i = n; i < default_Block_Size + n; i++) {
 			// get a completely non-matching trial
-			var trialToAdd = this.getRandomTrial(trials[i - n]);
-
-			var matchingKind;
+			var trialToAdd = this.getRandomTrialNoMatch(trials[i - n]);
 
 			// is this trial the 2nd in a target ("matching") pair? If so,
 			// we need to tweak it before we add it so that it matches
-			var findResult = targets.find(function(el) {
-				return el === (i - n);
+			var matchingKind = targets.find(function(el) {
+				return el.Key === (i - n);
 			});
-			if(findResult != undefined) {
-				var matchingKind = targets.find(i - n);
+			if(matchingKind !== undefined) {
 				var trialAlreadyAdded = trials[i - n];
 
 				// set the "matching kind" in the 2nd pair that we're adding
-				trialToAdd.SetSecondTrialInTarget = matchingKind;
-				if(matchingKind == TargetKind.Audio) {
-					trialToAdd.SetLetter = trialAlreadyAdded.GetLetter();
-				} else if(matchingKind == TargetKind.Visual) {
-					trialToAdd.SetPosition = trialAlreadyAdded.GetPosition();
-				} else if(matchingKind == TargetKind.Both) {
-					trialToAdd.SetLetter = trialAlreadyAdded.GetLetter();
-					trialToAdd.SetPosition = trialAlreadyAdded.GetPosition();
+				trialToAdd.SetSecondTrialInTarget(matchingKind.Value);
+				if(matchingKind.Value === TargetKind.Audio) {
+					trialToAdd.SetLetter(trialAlreadyAdded.GetLetter());
+				} else if(matchingKind.Value === TargetKind.Visual) {
+					trialToAdd.SetPosition(trialAlreadyAdded.GetPosition());
+				} else if(matchingKind.Value === TargetKind.Both) {
+					trialToAdd.SetLetter(trialAlreadyAdded.GetLetter());
+					trialToAdd.SetPosition(trialAlreadyAdded.GetPosition());
 				}
 			}
 
@@ -94,7 +91,7 @@ function BlockCreator() {
 			if(a.Key < b.Key) {
 				return -1;
 			}
-			// a must be equal
+			// a, b must be equal
 			return 0;
 		});
 
@@ -109,7 +106,9 @@ function BlockCreator() {
 
 		do {
 			// gives 0 to default_Block_Size - 1 which is a perfect index into all possible iLocation(s)
-			iLocation = Math.floor((Math.random() * default_Block_Size) + 1);
+			iLocation = Math.floor((Math.random() * default_Block_Size));
+
+			console.log(iLocation);
 
 			var k;
 
@@ -126,7 +125,7 @@ function BlockCreator() {
 	}
 
 	// get a random trial that doesn't match (either audio or visual) the passed-in trial
-	this.getRandomTrial = function(noMatch) {
+	this.getRandomTrialNoMatch = function(noMatch) {
 		var s;
 		var c;
 
@@ -250,4 +249,36 @@ function consonantIndexer(i) {
 	}
 
 	return consonant;
+}
+
+
+function targetKindIndexer(i) {
+	var targetKind;
+
+	switch(i) {
+		case 1:
+			targetKind = TargetKind.Audio;
+			break;
+
+		case 2:
+			targetKind = TargetKind.Visual;
+			break;
+
+		case 3:
+			targetKind = TargetKind.Both;
+			break;
+
+		case 4:
+			targetKind = TargetKind.None;
+			break;
+
+		case 5:
+			targetKind = TargetKind.TooEarly;
+			break;
+
+		default:
+			break;
+	}
+
+	return targetKind;
 }

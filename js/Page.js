@@ -277,9 +277,6 @@ function Page() {
         self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
  	}
 
- 	this.handleScores = function(totalCorrect, totalScore) {
- 		//ScoreText.Text = totalScore.ToString();
- 	}
 
  	// display trial information (square, audio, etc.) to the user
  	this.presentTrialInfoToUser = function(t) {

@@ -234,6 +234,11 @@ QUnit.test("Block creator class tests", function(assert) {
 	var nVisualTargets = 0;
 	var nBothTargets = 0;
 	var t = blockCreator.getRandomTrial();
+	var nTrialsAudioTargets = 0;
+	var nTrialsVisualTargets = 0;
+	var nTrialsBothTargets = 0;
+	var nTrialsTooEarlyTargets = 0;
+	var nTrialsNoneTargets = 0;
 
 	assert.ok(t.GetPosition() >= 0 && t.GetPosition() <= 7, "getRandomTrial() returns a correct Trial object");
 	assert.ok(t.GetLetter() >= 0 && t.GetLetter() <= 7, "getRandomTrial() returns a correct Trial object");
@@ -251,19 +256,35 @@ QUnit.test("Block creator class tests", function(assert) {
 	assert.ok(blockCreator instanceof BlockCreator, "Constructor instantiates ok");
 
 	assert.deepEqual(trials.length, 22, "createBlock() creates array of correct length");
-	assert.ok(trials[0] instanceof Trial, "createBlock() creates array of Trial objects");
-
 	assert.deepEqual(trials[0].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
 	assert.deepEqual(trials[1].GetSecondTrialInTarget(), TargetKind.TooEarly, "First two trials are set to too early");
 
 	trials.forEach(function(t) {
-		assert.notDeepEqual(t.GetPosition(), undefined, "individual trials in the block are instantiated correctly");
-		assert.notDeepEqual(t.GetLetter(), undefined, "individual trials in the block are instantiated correctly");
+		assert.ok(t instanceof Trial, "createBlock() creates array of Trial objects");
+		assert.notDeepEqual(t.GetPosition(), undefined, "individual trials in the block have a valid target position");
+		assert.notDeepEqual(t.GetLetter(), undefined, "individual trials in the block have a valid target letter");
+		if(t.GetSecondTrialInTarget() === TargetKind.Audio) {
+			nTrialsAudioTargets++;
+		} else if(t.GetSecondTrialInTarget() === TargetKind.Visual) {
+			nTrialsVisualTargets++;
+		} else if(t.GetSecondTrialInTarget() === TargetKind.Both) {
+			nTrialsBothTargets++;
+		} else if(t.GetSecondTrialInTarget() === TargetKind.TooEarly) {
+			nTrialsTooEarlyTargets++;
+		} else if(t.GetSecondTrialInTarget() === TargetKind.None) {
+			nTrialsNoneTargets++;
+		}
 	});
 
+	assert.deepEqual(nTrialsAudioTargets, 4, "we have 4 trials that are audio targets");
+	assert.deepEqual(nTrialsVisualTargets, 4, "we have 4 trials that are visual targets");
+	assert.deepEqual(nTrialsBothTargets, 2, "we have 2 trials that are both targets");
+	assert.deepEqual(nTrialsTooEarlyTargets, 2, "we have 2 trials that are too early targets");
+	assert.deepEqual(nTrialsNoneTargets, 10, "we have 10 trials that are none targets");
+
 	assert.deepEqual(typeof(randTargetLoc), "number", "getRandomTargetLocation() returns a number");
-	assert.ok(randTargetLoc > 0, "getRandomTargetLocation() returns a number greater than 0");
-	assert.ok(randTargetLoc <= 20, "getRandomTargetLocation() returns a number less than or equal to 20");
+	assert.ok(randTargetLoc >= 0, "getRandomTargetLocation() returns a number greater than or equal to 0");
+	assert.ok(randTargetLoc < 20, "getRandomTargetLocation() returns a number less than 20");
 	
 	assert.deepEqual(targets.length, 10, "getTargets() returns correct number of trials");
 	assert.deepEqual(nAudioTargets, 4, "we have 4 audio targets");
@@ -296,6 +317,15 @@ QUnit.test("Trial class tests", function(assert) {
 	assert.deepEqual(trial.GetPosition(), SquarePosition.MiddleLeft, "setters return correct values");
 	assert.deepEqual(trial.GetLetter(), Consonant.Letter5, "setters return correct values");
 	assert.deepEqual(trial.GetSecondTrialInTarget(), TargetKind.Visual, "setters return correct values");
+
+	// use setters with indexes
+	trial.SetPosition(4);
+	trial.SetLetter(2);
+	trial.SetSecondTrialInTarget(1);
+
+	assert.deepEqual(trial.GetPosition(), 4, "setting via index returns correct value");
+	assert.deepEqual(trial.GetLetter(), 2, "setting via index returns correct value");
+	assert.deepEqual(trial.GetSecondTrialInTarget(), 1, "setting via index returns correct value");
 
 });
 
@@ -454,6 +484,13 @@ QUnit.test("Enums tests", function(assert) {
 	assert.deepEqual(Consonant.Letter9, undefined, "enums do not return non-existent members");
 	assert.deepEqual(TargetKind.WayTooEarly, undefined, "enums do not return non-existent members");
 	assert.deepEqual(TrialResult.Abject_Failure, undefined, "enums do not return non-existent members");
+
+	// random number generator tests
+	assert.ok(GenerateRandomPosition() >= 0, "Square Position random number generator is within range");
+	assert.ok(GenerateRandomPosition() <= 7, "Square Position random number generator is within range");
+
+	assert.ok(GenerateRandomLetter() >= 0, "Consonant random number generator is within range");
+	assert.ok(GenerateRandomLetter() <= 7, "Consonant random number generator is within range");
 });
 
 
@@ -468,3 +505,13 @@ QUnit.assert.close = function(number, expected, error, message) {
 
   	this.push(result, number, expected, message);
 };
+
+
+// custom random number generator functions - lifted as an excerpt from BlockCreator
+function GenerateRandomPosition() {
+	return Math.floor((Math.random() * SquarePosition.MiddleLeft) + 1);
+}
+
+function GenerateRandomLetter() {
+	return Math.floor((Math.random() * Consonant.Letter8) + 1);
+}
