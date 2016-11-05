@@ -5,6 +5,15 @@ function BlockCreator() {
 	const num_Visual_Targets = 4;
 	const num_Both_Targets = 2;
 
+	// PROPERTIES
+	this.GetDefaultBlockSize = function() {
+		return default_Block_Size;
+	}
+
+	this.GetNumBlocksTotal = function() {
+		return num_Blocks_Total;
+	}
+
 	// FUNCTIONS
 	this.createBlock = function(n) {
 		// get a list of targets (positive trials) that should appear in the trials
@@ -107,10 +116,6 @@ function BlockCreator() {
 		do {
 			// gives 0 to default_Block_Size - 1 which is a perfect index into all possible iLocation(s)
 			iLocation = Math.floor((Math.random() * default_Block_Size));
-
-			console.log(iLocation);
-
-			var k;
 
 			// if this value is already used, just stay in the loop
 			var findElement = targets.find(function(el) {

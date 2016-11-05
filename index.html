@@ -15,12 +15,12 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <style>
+    <!--<style>
     body {
         padding-top: 70px;
         /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
     }
-    </style>
+    </style>-->
 
     <link href="css/n-back.css" rel="stylesheet">
 
@@ -36,22 +36,22 @@
 <body>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
+    <!-- <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"> -->
+        <!-- <div class="container"> -->
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
-            </div>
+            <!-- <div class="navbar-header"> -->
+                <!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> -->
+                    <!-- <span class="sr-only">Toggle navigation</span> -->
+                    <!-- <span class="icon-bar"></span> -->
+                    <!-- <span class="icon-bar"></span> -->
+                    <!-- <span class="icon-bar"></span> -->
+                <!-- </button> -->
+                <!-- <a class="navbar-brand" href="#">Start Bootstrap</a> -->
+            <!-- </div> -->
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
+            <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> -->
+                <!-- <ul class="nav navbar-nav"> -->
+                    <!-- <li>
                         <a href="#">About</a>
                     </li>
                     <li>
@@ -59,13 +59,13 @@
                     </li>
                     <li>
                         <a href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
+                    </li> -->
+                <!-- </ul> -->
+            <!-- </div> -->
             <!-- /.navbar-collapse -->
-        </div>
+        <!-- </div> -->
         <!-- /.container -->
-    </nav>
+    <!-- </nav> -->
 
     <!-- Page Content -->
     <div class="container">
@@ -98,8 +98,8 @@
         <div class="row">
             <!-- score col -->
             <div class="col-lg-3">
-                <p>Session: 1/20</p>
-                <p>Score: <span id="score-text"></span></p>
+                <p>Session: <span id="session-number">1</span> / 20</p>
+                <p>Score: <span id="score-text">0</span></p>
             </div>
 
             <!-- 1st grid row -->
@@ -108,10 +108,10 @@
             <div id="top-right" class="col-xs-2 text-center cell"></div>
 
             <!-- info popup col -->
-            <div class="col-md-3 text-right">
-                <p>Next level: 3</p>
-                <p>Correct audio trials: 14/20</p>
-                <p>Correct visual trials: 13/20</p>
+            <div class="col-md-3 text-right" id="help-text">
+                <p id="next-level-info"></p>
+                <p id="correct-audio-results"></p>
+                <p id="correct-visual-results"></p>
             </div>
         </div>
 

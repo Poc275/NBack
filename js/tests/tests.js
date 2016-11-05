@@ -239,6 +239,7 @@ QUnit.test("Block creator class tests", function(assert) {
 	var nTrialsBothTargets = 0;
 	var nTrialsTooEarlyTargets = 0;
 	var nTrialsNoneTargets = 0;
+	var nBackHigher = blockCreator.createBlock(Math.floor((Math.random() * 7) + 1));
 
 	assert.ok(t.GetPosition() >= 0 && t.GetPosition() <= 7, "getRandomTrial() returns a correct Trial object");
 	assert.ok(t.GetLetter() >= 0 && t.GetLetter() <= 7, "getRandomTrial() returns a correct Trial object");
@@ -274,6 +275,12 @@ QUnit.test("Block creator class tests", function(assert) {
 		} else if(t.GetSecondTrialInTarget() === TargetKind.None) {
 			nTrialsNoneTargets++;
 		}
+	});
+
+	nBackHigher.forEach(function(t) {
+		assert.ok(t instanceof Trial, "createBlock() works with a higher NBack number");
+		assert.notDeepEqual(t.GetPosition(), undefined, "createBlock() works with a higher NBack number");
+		assert.notDeepEqual(t.GetLetter(), undefined, "createBlock() works with a higher NBack number");
 	});
 
 	assert.deepEqual(nTrialsAudioTargets, 4, "we have 4 trials that are audio targets");

@@ -1,5 +1,11 @@
 function Page() {
+    // square highlight duration
+    const _stimulus_time = 500;
+    // total time to wait for user input
+    const _total_trial_time = 3000;
+
     var self = this; // for event handlers
+    var blockCreator; // is a static class in the original silverlight app
     var startButton = document.getElementById('start-button');
 
 	// our list of trials
@@ -16,11 +22,6 @@ function Page() {
 
 	// value of n for the current block
 	this._n = this._starting_N;
-
-	const _stimulus_time = 500;
-
-	// total time to wait for user input
-	const _total_trial_time = 3000;
 
 	// keeps track of the user's score
 	this._score = new Score();
@@ -174,7 +175,7 @@ function Page() {
 
 
  	this.Start_Training = function() {
-        var blockCreator = new BlockCreator();
+        blockCreator = new BlockCreator();
 
  		self._playingGame = true;
 
@@ -215,14 +216,14 @@ function Page() {
  		// are we at the end of a block?
  		if(self._trialNum >= self.m_Trials.length) {
  			// are we at the end of an entire session (20 blocks)?
- 			if(self._blockNum == (BlockCreator.num_Blocks_Total - 1)) {
+ 			if(self._blockNum == (blockCreator.GetNumBlocksTotal() - 1)) {
  				// what was the average n level?
  				var averageN = self._score.getMeanN();
- 				// output to screen....
+ 				document.getElementById("next-level-info").innerHTML = averageN.toString();
 
  				if(self._score.getPercentGFIncrease() > 0) {
  					var gFIncrease = self._score.getPercentGFIncrease();
- 					// output to screen...
+ 					document.getElementById("next-level-info").innerHTML += gFIncrease.toString();
  				}
 
  				//FadeInHelpBox.Begin();
@@ -237,6 +238,10 @@ function Page() {
             // output results
             // AudioTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size-_score.audioMistakes,BlockCreator.default_Block_Size);
             // VisualTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size - _score.visualMistakes, BlockCreator.default_Block_Size);
+            document.getElementById("correct-audio-results").innerHTML = (blockCreator.GetDefaultBlockSize() - self._score.audioMistakes).toString() + 
+                " / " + blockCreator.GetDefaultBlockSize().toString();
+            document.getElementById("correct-visual-results").innerHTML = (blockCreator.GetDefaultBlockSize() - self._score.visualMistakes).toString() + 
+                " / " + blockCreator.GetDefaultBlockSize().toString();
  			var deltaN = self._score.endBlock();
  			if((deltaN + self._n) >= 2) {
  				self._n = self._n + deltaN;
@@ -244,6 +249,7 @@ function Page() {
 
  			// display the next trial level (N number) in the popup
  			//NumberBack.Text = _n.ToString();
+            document.getElementById("next-level-info").innerHTML = _n.toString();
 
  			//Position pop-ups
             //GeneralTransform gt = PopupTarget.TransformToVisual(Application.Current.RootVisual as UIElement);
@@ -359,7 +365,7 @@ function Page() {
 
 
 function handleScores(totalScore) {
-    document.getElementById("score-text").textContent = totalScore.toString();
+    document.getElementById("score-text").innerHTML = totalScore.toString();
 }
 
 
