@@ -5,8 +5,9 @@ function Page() {
     const _total_trial_time = 3000;
 
     var self = this; // for event handlers
-    var blockCreator; // is a static class in the original silverlight app
     var startButton = document.getElementById('start-button');
+
+    this.blockCreator = new BlockCreator(); // is a static class in the original silverlight app
 
 	// our list of trials
 	this.m_Trials = [];
@@ -175,11 +176,11 @@ function Page() {
 
 
  	this.Start_Training = function() {
-        blockCreator = new BlockCreator();
+        // self.blockCreator = new BlockCreator();
 
  		self._playingGame = true;
 
-        _score = new Score();
+        //_score = new Score();
         //_score.HandleTrialOutcome += handleTrialResult;
         //_score.HandleScores += handleScores;
 
@@ -187,12 +188,12 @@ function Page() {
         self._n = self._starting_N;
         self._blockNum = 0;
         self._trialNum = 0;
-        self.m_Trials = blockCreator.createBlock(self._n);
-        _score.startBlock(self._n);
+        self.m_Trials = self.blockCreator.createBlock(self._n);
+        self._score.startBlock(self._n);
 
         // present the first trial to the user
         self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
-        _score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget);
+        self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget);
 
         // start the timers for the first trial
         self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
@@ -216,7 +217,7 @@ function Page() {
  		// are we at the end of a block?
  		if(self._trialNum >= self.m_Trials.length) {
  			// are we at the end of an entire session (20 blocks)?
- 			if(self._blockNum == (blockCreator.GetNumBlocksTotal() - 1)) {
+ 			if(self._blockNum == (self.blockCreator.GetNumBlocksTotal() - 1)) {
  				// what was the average n level?
  				var averageN = self._score.getMeanN();
  				document.getElementById("next-level-info").innerHTML = averageN.toString();
@@ -238,10 +239,10 @@ function Page() {
             // output results
             // AudioTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size-_score.audioMistakes,BlockCreator.default_Block_Size);
             // VisualTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size - _score.visualMistakes, BlockCreator.default_Block_Size);
-            document.getElementById("correct-audio-results").innerHTML = (blockCreator.GetDefaultBlockSize() - self._score.audioMistakes).toString() + 
-                " / " + blockCreator.GetDefaultBlockSize().toString();
-            document.getElementById("correct-visual-results").innerHTML = (blockCreator.GetDefaultBlockSize() - self._score.visualMistakes).toString() + 
-                " / " + blockCreator.GetDefaultBlockSize().toString();
+            document.getElementById("correct-audio-results").innerHTML += (self.blockCreator.GetDefaultBlockSize() - self._score.audioMistakes()).toString() + 
+                " / " + self.blockCreator.GetDefaultBlockSize().toString();
+            document.getElementById("correct-visual-results").innerHTML += (self.blockCreator.GetDefaultBlockSize() - self._score.visualMistakes()).toString() + 
+                " / " + self.blockCreator.GetDefaultBlockSize().toString();
  			var deltaN = self._score.endBlock();
  			if((deltaN + self._n) >= 2) {
  				self._n = self._n + deltaN;
@@ -249,7 +250,7 @@ function Page() {
 
  			// display the next trial level (N number) in the popup
  			//NumberBack.Text = _n.ToString();
-            document.getElementById("next-level-info").innerHTML = _n.toString();
+            document.getElementById("next-level-info").innerHTML += self._n.toString();
 
  			//Position pop-ups
             //GeneralTransform gt = PopupTarget.TransformToVisual(Application.Current.RootVisual as UIElement);
