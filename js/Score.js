@@ -45,8 +45,8 @@ function Score() {
 					handleTrialResult(TrialResult.Visual_Success);
 				} else {
 					handleTrialResult(TrialResult.Visual_Failure);
-					self._visualKeyPressed = true;
 				}
+				self._visualKeyPressed = true;
 				break;
 
 			case 'l':
@@ -57,8 +57,8 @@ function Score() {
 					handleTrialResult(TrialResult.Audio_Success);
 				} else {
 					handleTrialResult(TrialResult.Audio_Failure);
-					self._audioKeyPressed = true;
 				}
+				self._audioKeyPressed = true;
 				break;
 
 			default:

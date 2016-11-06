@@ -104,6 +104,20 @@ function BlockCreator() {
 			return 0;
 		});
 
+		// OUTPUT ANSWERS FOR SCORE DEBUGGING
+		targets.forEach(function(target) {
+			var buttonToPress;
+
+			if(target.Value === 1) {
+				buttonToPress = 'L';
+			} else if(target.Value === 2) {
+				buttonToPress = 'A';
+			} else if(target.Value === 3) {
+				buttonToPress = 'Both';
+			}
+			console.log(target.Key + " - " + buttonToPress);
+		});
+
 		return targets;
 	}
 

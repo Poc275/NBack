@@ -6,6 +6,7 @@ function Page() {
 
     var self = this; // for event handlers
     var startButton = document.getElementById('start-button');
+    var continueButton = document.getElementById('continue-button');
 
     this.blockCreator = new BlockCreator(); // is a static class in the original silverlight app
 
@@ -33,56 +34,18 @@ function Page() {
     // timers - from Page.xaml
     // initial wait - gap before the trial starts so the user can get ready
     // Timer_1 - for the stimulus, i.e. the square highlights
-    // TrialTimer - total trial time, trial is ended when completed
+    // TrialTimer - total trial time, trial is ended when complete
+    // _continurTimer - a timer to wait after the "continue" button has been clicked
     this.initialWait;
     this.Timer_1;
     this.TrialTimer;
-
+    this._continueTimer;
 
 	DisplayN(this._starting_N);
- 	//square.Opacity = 0;
  	setProgress(0);
-    
- 	//DemoTimer.Completed += new EventHandler(demoStepEnded);
- 	//InitialWait.Completed += new EventHandler(Start_Training);
- 	//InitialWait.Duration = new TimeSpan(675 * 10000);//675ms
- 	//_continueTimer.Completed += new EventHandler(startBlock);
- 	//_continueTimer.Duration = new TimeSpan(675 * 10000);//675ms
 
 
  	// EVENTS
- 	//PauseButton_Click() {
-	    // //Pause all animations/timers
-	    // Timer_1.Pause();
-	    // FadeBoxOut.Pause();
-	    // TrialTimer.Pause();
-
-	    // //Position pop-ups
-	    // GeneralTransform gt = PopupTarget.TransformToVisual(Application.Current.RootVisual as UIElement);
-	    // Point offset = gt.Transform(new Point(0, 0));
-	    // PausePopup.HorizontalOffset = offset.X;
-	    // PausePopup.VerticalOffset = offset.Y;
-
-	    // PausePopup.IsOpen = true;
-
-	    // StartButton.Click -= PauseButton_Click;
-	    // StartButton.Content = "Continue";
-	    // StartButton.Click += continueButton_Click;
-    //}
-
-    // continue from pause
-    // continueButton_Click() {
-    //     StartButton.Click -= continueButton_Click;
-    //     StartButton.Content = "Pause";
-    //     StartButton.Click += PauseButton_Click;
-
-    //     PausePopup.IsOpen = false;
-    //     Timer_1.Resume();
-    //     FadeBoxOut.Resume();
-    //     TrialTimer.Resume();
-
-    //}
-
     startButton.addEventListener('click', function(event) {
         // check for start/pause via changing the text value of the button itself
         if(event.target.value == "Start") {
@@ -91,30 +54,21 @@ function Page() {
             // original timer = 675 * 10000 (675ms)
             // in setTimeout() the delay is in milliseconds
             // 'this' in an event handler is the object that fired the event
-            self.initialWait = window.setTimeout(self.Start_Training, 675);
+            self.initialWait = new Timer(self.Start_Training, 675);
         } else if(event.target.value == "Pause") {
-            event.target.value = "Start";
-            event.target.textContent = "Start";
+            event.target.value = "Resume";
+            event.target.textContent = "Resume";
+            // pause all animations/timers
+            self.Timer_1.pause();
+            self.TrialTimer.pause();
+        } else if(event.target.value == "Resume") {
+            // continue from pause
+            event.target.value = "Pause";
+            event.target.textContent = "Pause";
+            self.Timer_1.resume();
+            self.TrialTimer.resume();
         }
     });
-
-    // Reset_Click() {
-    //     StartButton.Content = Page_Resources.Start_Button;
-    //     StartButton.Click -= Reset_Click;
-    //     StartButton.Click += StartButton_Click;
-    //     FadeHelpBoxOut.Begin();
-
-    //     _blockNum = 0;
-    //     _playingGame = false;
-    //     _trialNum = 0;
-    //     _n = _starting_N;
-    //     //LayoutRoot.InvalidateArrange();
-
-    //     SessionText.Text = String.Format("{0}/{1}", _blockNum, BlockCreator.default_Block_Size);
-    //     //NumberCorrectText.Text = 0.ToString();
-    //     ScoreText.Text = 0.ToString() ;
-    //     //NText.Text = _n.ToString();
-    //}
 
     document.addEventListener("keyup", function(event) {
       if(self._playingGame === true) {
@@ -122,42 +76,41 @@ function Page() {
       }
     }, false);
 
-    // ContinueButton_Click() {
-    //     EndBlockPopup.IsOpen = false;
+    continueButton.addEventListener('click', function(event) {
+        if(event.target.value == "Continue") {
+            // hide results ready for new session
+            document.getElementById("help-text").style.visibility = "hidden";
 
-    //     //Start a new block...
-    //     ProgBar.setProgress(0);
-    //     _blockNum++;
-    //     SessionText.Text = String.Format("{0}/{1}", _blockNum+1, BlockCreator.default_Block_Size);
+            // Start a new block...
+            setProgress(0);
+            self._blockNum++;
+            document.getElementById("session-number").innerHTML = (self._blockNum + 1).toString() +
+                " / " + self.blockCreator.GetDefaultBlockSize().toString();
 
-    //     m_Trials = BlockCreator.createBlock(_n);
-    //     _trialNum = 0;
+            self.m_Trials = self.blockCreator.createBlock(self._n);
+            self._trialNum = 0;
 
-    //     //Tell the user the n they're using
-    //     ShowN.DisplayN(_n);
+            // Tell the user the n they're using
+            DisplayN(self._n);
+            self._score.startBlock(self._n);
 
-    //     _score.startBlock(_n);
+            // Give the user a chance to catch their breath before starting the next block.
+            self._continueTimer = new Timer(self.startBlock, 675);
+        } else if(event.target.value == "Reset") {
+            event.target.value = "Continue";
+            event.target.textContent = "Continue";
 
-    //     //Make sure that the media players are stopped.
-    //     AudioPlayer_1.Stop();
-    //     AudioPlayer_2.Stop();
-    //     AudioPlayer_3.Stop();
-    //     AudioPlayer_4.Stop();
-    //     AudioPlayer_5.Stop();
-    //     AudioPlayer_6.Stop();
-    //     AudioPlayer_7.Stop();
-    //     AudioPlayer_8.Stop();
+            self._blockNum = 0;
+            self._playingGame = false;
+            self._trialNum = 0;
+            self._n = self._starting_N;
 
-    //     //Give the user a chance to catch their breath before starting the next block.
-    //     _continueTimer.Begin();
-    // }
-
-    //Reset whatever audio is calling us...
-    // AudioPlayer_MediaEnded() {
-    //     MediaElement m = (MediaElement)sender;
-    //     m.Stop();
-    //     m.Position = TimeSpan.FromMilliseconds(0);
-    // }
+            // reset session number
+            document.getElementById("session-number").innerHTML = "1 / " + 
+                self.blockCreator.GetDefaultBlockSize().toString();
+            document.getElementById("score-text") = "0";
+        }
+    });
 
 
     // FUNCTIONS
@@ -174,15 +127,8 @@ function Page() {
         document.getElementById("top-right").style.backgroundColor = "";
     }
 
-
  	this.Start_Training = function() {
-        // self.blockCreator = new BlockCreator();
-
  		self._playingGame = true;
-
-        //_score = new Score();
-        //_score.HandleTrialOutcome += handleTrialResult;
-        //_score.HandleScores += handleScores;
 
         // we're starting, get the list of trials and clear the extra stuff
         self._n = self._starting_N;
@@ -196,8 +142,8 @@ function Page() {
         self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget);
 
         // start the timers for the first trial
-        self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
-        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
+        self.Timer_1 = new Timer(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = new Timer(self.trialTimeUp, _total_trial_time);
  	}
 
  	// called whenever the total time for an individual trial has expired
@@ -227,21 +173,17 @@ function Page() {
  					document.getElementById("next-level-info").innerHTML += gFIncrease.toString();
  				}
 
- 				//FadeInHelpBox.Begin();
-                //StartButton.Content = Page_Resources.Reset__Button;
-                //StartButton.Click -= StartButton_Click;
-                //StartButton.Click -= PauseButton_Click;
-                //StartButton.Click += Reset_Click;
+                continueButton.value = "Reset";
+                continueButton.textContent = "Reset";
                 return;
  			}
 
- 			// end the block
-            // output results
-            // AudioTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size-_score.audioMistakes,BlockCreator.default_Block_Size);
-            // VisualTargetsText.Text = String.Format("{0}/{1}", BlockCreator.default_Block_Size - _score.visualMistakes, BlockCreator.default_Block_Size);
-            document.getElementById("correct-audio-results").innerHTML += (self.blockCreator.GetDefaultBlockSize() - self._score.audioMistakes()).toString() + 
+ 			// end the block, output results
+            document.getElementById("correct-audio-results").innerHTML = "Correct Audio Results: " +
+                (self.blockCreator.GetDefaultBlockSize() - self._score.audioMistakes()).toString() + 
                 " / " + self.blockCreator.GetDefaultBlockSize().toString();
-            document.getElementById("correct-visual-results").innerHTML += (self.blockCreator.GetDefaultBlockSize() - self._score.visualMistakes()).toString() + 
+            document.getElementById("correct-visual-results").innerHTML = "Correct Visual Results: " + 
+                (self.blockCreator.GetDefaultBlockSize() - self._score.visualMistakes()).toString() + 
                 " / " + self.blockCreator.GetDefaultBlockSize().toString();
  			var deltaN = self._score.endBlock();
  			if((deltaN + self._n) >= 2) {
@@ -249,15 +191,10 @@ function Page() {
  			}
 
  			// display the next trial level (N number) in the popup
- 			//NumberBack.Text = _n.ToString();
-            document.getElementById("next-level-info").innerHTML += self._n.toString();
+            document.getElementById("next-level-info").innerHTML = "Next level: " + self._n.toString();
 
- 			//Position pop-ups
-            //GeneralTransform gt = PopupTarget.TransformToVisual(Application.Current.RootVisual as UIElement);
-            //Point offset = gt.Transform(new Point(0, 0));
-            //EndBlockPopup.HorizontalOffset = offset.X;
-            //EndBlockPopup.VerticalOffset = offset.Y;
-            //EndBlockPopup.IsOpen = true;
+            // display results
+            document.getElementById("help-text").style.visibility = "visible";
             return;
  		}
 
@@ -265,8 +202,8 @@ function Page() {
  		self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget());
  		self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
 
- 		self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
-        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
+        self.Timer_1 = new Timer(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = new Timer(self.trialTimeUp, _total_trial_time);
  	}
 
  	this.startBlock = function() {
@@ -274,14 +211,10 @@ function Page() {
  		self._score.startNewTrial(self.m_Trials[self._trialNum].GetSecondTrialInTarget());
  		self.presentTrialInfoToUser(self.m_Trials[self._trialNum]);
 
- 		//Timer_1.Seek(new TimeSpan(0));
         window.clearTimeout(self.Timer_1);
- 		//TrailTimer.Seek(new TimeSpan(0));
         window.clearTimeout(self.TrialTimer);
- 		//Timer_1.Begin();
- 		//TrialTimer.Begin();
-        self.Timer_1 = window.setTimeout(self.hideStimulus, _stimulus_time);
-        self.TrialTimer = window.setTimeout(self.trialTimeUp, _total_trial_time);
+        self.Timer_1 = new Timer(self.hideStimulus, _stimulus_time);
+        self.TrialTimer = new Timer(self.trialTimeUp, _total_trial_time);
  	}
 
 
@@ -442,4 +375,25 @@ function setProgress(prog) {
     }
 
     document.getElementById("prog-bar").style.width = prog + "%";
+}
+
+// setTimeout wrapper to include pause functionality
+// source: http://stackoverflow.com/questions/3969475/javascript-pause-settimeout
+function Timer(callback, delay) {
+    var timerId;
+    var start;
+    var remaining = delay;
+
+    this.pause = function() {
+        window.clearTimeout(timerId);
+        remaining -= new Date() - start;
+    };
+
+    this.resume = function() {
+        start = new Date();
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(callback, remaining);
+    };
+
+    this.resume();
 }

@@ -35,3 +35,7 @@
 #right-hand-feedback h4 {
 	font-weight: bold;
 }
+
+#help-text {
+	visibility: hidden;
+}

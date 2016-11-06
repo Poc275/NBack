@@ -3,6 +3,11 @@ QUnit.test("Page class timing tests", function(assert) {
 	var page = new Page();
 	var blockCreator = new BlockCreator();
 	var trials = blockCreator.createBlock(2);
+	var timerText = "incomplete";
+	var pauseTimerText = "incomplete";
+	var done = assert.async();
+	var pauseDone = assert.async();
+	var resumeDone = assert.async();
 
 	page.m_Trials = trials;
 
@@ -11,6 +16,31 @@ QUnit.test("Page class timing tests", function(assert) {
 	page.trialTimeUp();
 	assert.deepEqual(page._trialNum, 1, "trial number increments correctly");
 	assert.deepEqual(document.getElementById("prog-bar").style.width, "4.54545%", "Progress bar increments correctly");
+
+	// settimeout() wrapper tests
+	var timer = new Timer(function() {
+		timerText = "complete";
+	}, 1000);
+	assert.ok(timer instanceof Timer, "Timer constructor instantiates ok");
+	assert.deepEqual(timerText, "incomplete", "Timer callback initiated ok");
+	setTimeout(function() {
+		assert.deepEqual(timerText, "complete", "Timer callback completes");
+		done();
+	}, 1000);
+
+	var pauseTimer = new Timer(function() {
+		pauseTimerText = "complete";
+	}, 1000);
+	pauseTimer.pause();
+	setTimeout(function() {
+		assert.deepEqual(pauseTimerText, "incomplete", "Timer pause works");
+		pauseDone();
+	}, 1000);
+	pauseTimer.resume();
+	setTimeout(function() {
+		assert.deepEqual(pauseTimerText, "complete", "Timer resume works");
+		resumeDone();
+	}, 1000);
 });
 
 
@@ -100,6 +130,8 @@ QUnit.test("Progress bar function tests", function(assert) {
 	assert.deepEqual(progressBar.style.width, "0%", "Progress bar cannot be set above zero");
 	setProgress(50);
 	assert.deepEqual(progressBar.style.width, "50%", "Progress bar is set correctly");
+	setProgress(0);
+	assert.deepEqual(progressBar.style.width, "0%", "Progress bar resets back to 0%");
 });
 
 
