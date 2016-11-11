@@ -1,3 +1,22 @@
+// Storage/history tests
+QUnit.test("Storage and score history tests", function(assert) {
+	var dateOne = Date.now().toString();
+	addSessionToHistory(dateOne, 2.5);
+
+	assert.ok(storageAvailable('localStorage'), "Local storage is available");
+
+	assert.deepEqual(localStorage.getItem(dateOne), "2.5", "Local storage stores a session successfully");
+	assert.deepEqual(localStorage.length, 1, "Local storage is populated after session added to history");
+
+	var dateTwo = Date.now().toString();
+	addSessionToHistory(dateTwo, 3);
+	assert.deepEqual(localStorage.getItem(dateTwo), "3", "Local storage stores another session successfully");
+	assert.deepEqual(localStorage.length, 2, "Local storage is populated after second session added to history");
+
+	clearHistory();
+	assert.deepEqual(localStorage.length, 0, "Local storage is empty after call to clear history");
+});
+
 // Page tests
 QUnit.test("Page class timing tests", function(assert) {
 	var page = new Page();
