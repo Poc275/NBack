@@ -11,7 +11,6 @@
   <div id="qunit-fixture">
     <!-- button fixtures -->
     <button id="start-button" value="Start">Start</button>
-    <button id="continue-button" value="Continue">Continue</button>
 
     <!-- fixture for testing n-back display -->
     <div class="text-center n-grid" id="N1">1</div>
@@ -61,17 +60,35 @@
     <audio src="../../audio/letter8.mp3" id="letter8" muted></audio>
 
     <!-- score output fixtures -->
-    <div id="help-text"></div>
+    <!-- <div id="help-text"></div> -->
     <span id="score-text"></span>
-    <p id="next-level-info"></p>
-    <p id="correct-audio-results"></p>
-    <p id="correct-visual-results"></p>
+
+    <div class="modal fade" id="scoreModal" tabindex="-1" role="dialog" aria-labelledby="scoreModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Session complete!</h4>
+            </div>
+            <div class="modal-body">
+                <p id="next-level-info">Next level: </p>
+                <p id="correct-audio-results">Correct audio results: </p>
+                <p id="correct-visual-results">Correct visual results: </p>
+            </div>
+            <div class="modal-footer">
+                <button id="continue-button" class="btn btn-default" value="Continue" data-dismiss="modal">Continue</button>
+            </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 
 
   <!-- jQuery Version 1.11.1 -->
   <script src="../jquery.js"></script>
+
+  <!-- modal dialog testing needs bootstrap -->
+  <script src="../bootstrap.js"></script>
 
   <!-- NBack js scripts -->
   <script src="../Page.js" data-cover></script>

@@ -1,8 +1,7 @@
 .cell {
-	border: 1px solid #fff;
-	/*background-color: orange;*/
 	padding: 50px;
 	height: 150px;
+	background-color: #fff;
 }
 
 .n-grid {
@@ -36,6 +35,6 @@
 	font-weight: bold;
 }
 
-#help-text {
-	visibility: hidden;
+body {
+	background-color: rgba(120, 120, 120, 0.2);
 }

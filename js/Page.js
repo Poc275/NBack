@@ -78,9 +78,6 @@ function Page() {
 
     continueButton.addEventListener('click', function(event) {
         if(event.target.value == "Continue") {
-            // hide results ready for new session
-            document.getElementById("help-text").style.visibility = "hidden";
-
             // Start a new block...
             setProgress(0);
             self._blockNum++;
@@ -100,15 +97,20 @@ function Page() {
             event.target.value = "Continue";
             event.target.textContent = "Continue";
 
+            startButton.value = "Start";
+            startButton.textContent = "Start";
+
             self._blockNum = 0;
             self._playingGame = false;
             self._trialNum = 0;
             self._n = self._starting_N;
+            self._score._score = 0;
+            setProgress(0);
 
             // reset session number
             document.getElementById("session-number").innerHTML = "1 / " + 
                 self.blockCreator.GetDefaultBlockSize().toString();
-            document.getElementById("score-text") = "0";
+            document.getElementById("score-text").innerHTML = "0";
         }
     });
 
@@ -166,15 +168,27 @@ function Page() {
  			if(self._blockNum == (self.blockCreator.GetNumBlocksTotal() - 1)) {
  				// what was the average n level?
  				var averageN = self._score.getMeanN();
- 				document.getElementById("next-level-info").innerHTML = averageN.toString();
+ 				document.getElementById("next-level-info").innerHTML = "You have completed all of the sessions. Congratulations!<br>" + 
+                    "You had an average N level of " + averageN.toString();
 
  				if(self._score.getPercentGFIncrease() > 0) {
  					var gFIncrease = self._score.getPercentGFIncrease();
- 					document.getElementById("next-level-info").innerHTML += gFIncrease.toString();
+ 					document.getElementById("next-level-info").innerHTML += "<br>" + gFIncrease.toString();
  				}
 
+                // output last block score, note the original version doesn't do this
+                document.getElementById("correct-audio-results").innerHTML = "Correct Audio Results: " +
+                    (self.blockCreator.GetDefaultBlockSize() - self._score.audioMistakes()).toString() + 
+                    " / " + self.blockCreator.GetDefaultBlockSize().toString();
+                document.getElementById("correct-visual-results").innerHTML = "Correct Visual Results: " + 
+                    (self.blockCreator.GetDefaultBlockSize() - self._score.visualMistakes()).toString() + 
+                    " / " + self.blockCreator.GetDefaultBlockSize().toString();
+
+                // change button to reset to start a brand new trial
                 continueButton.value = "Reset";
                 continueButton.textContent = "Reset";
+
+                $('#scoreModal').modal('show');
                 return;
  			}
 
@@ -193,8 +207,8 @@ function Page() {
  			// display the next trial level (N number) in the popup
             document.getElementById("next-level-info").innerHTML = "Next level: " + self._n.toString();
 
-            // display results
-            document.getElementById("help-text").style.visibility = "visible";
+            // display results dialog
+            $('#scoreModal').modal('show');
             return;
  		}
 

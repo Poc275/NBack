@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dual N-Back Training for memory and intelligence</title>
+    <title>Dual N-Back Training</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -72,14 +72,13 @@
 
         <div class="row">
             <div class="col-lg-12 text-center">
-                <h1>Dual N-Back</h1>
-                <p class="lead">Dual n-back training for memory and intelligence.</p>
+                <h1>Dual N-Back Training</h1>
+                <!-- <p class="lead">Dual n-back training for memory and intelligence.</p> -->
             </div>
         </div>
-        <!-- /.row -->
 
         <div class="row">
-            <div class="col-lg-12 text-center">
+            <div class="col-xs-12 text-center">
                 <h2>REMEMBER:</h2>
                 <div class="text-center n-grid" id="N1">1</div>
                 <div class="text-center n-grid" id="N2">2</div>
@@ -94,51 +93,47 @@
         <!-- empty spacer row -->
         <br />
 
+        <div class="col-xs-12">
+            <p>Session: <span id="session-number">1 / 20</span></p>
+            <p>Score: <span id="score-text">0</span></p>
+        </div>
+
+        <!-- empty spacer row -->
+        <br />
+
         <!-- main grid area -->
         <div class="row">
-            <!-- score col -->
-            <div class="col-lg-3">
-                <p>Session: <span id="session-number">1 / 20</span></p>
-                <p>Score: <span id="score-text">0</span></p>
-            </div>
-
             <!-- 1st grid row -->
-            <div id="top-left" class="col-xs-2 text-center cell"></div>
+            <div id="top-left" class="col-xs-2 col-xs-offset-3 text-center cell"></div>
             <div id="top-middle" class="col-xs-2 text-center cell"></div>
             <div id="top-right" class="col-xs-2 text-center cell"></div>
-
-            <!-- info popup col -->
-            <div class="col-md-3 text-right" id="help-text">
-                <h4>Session complete</h4>
-                <p id="next-level-info">Next level: </p>
-                <p id="correct-audio-results">Correct audio results: </p>
-                <p id="correct-visual-results">Correct visual results: </p>
-                <button id="continue-button" value="Continue">Continue</button>
-            </div>
         </div>
 
         <!-- 2nd grid row -->
         <div class="row">
-            <div id="middle-left" class="col-xs-2 col-lg-offset-3 text-center cell"></div>
+            <div id="middle-left" class="col-xs-2 col-xs-offset-3 text-center cell"></div>
             <div id="middle" class="col-xs-2 text-center cell"></div>
             <div id="middle-right" class="col-xs-2 text-center cell"></div>
         </div>
 
         <!-- final grid row -->
         <div class="row">
-            <div id="bottom-left" class="col-xs-2 col-lg-offset-3 text-center cell"></div>
+            <div id="bottom-left" class="col-xs-2 col-xs-offset-3 text-center cell"></div>
             <div id="bottom-middle" class="col-xs-2 text-center cell"></div>
             <div id="bottom-right" class="col-xs-2 text-center cell"></div>
         </div>
 
+        <!-- empty spacer row -->
+        <br />
+
         <!-- key indicator and progress bar -->
         <div class="row">
-            <div id="left-hand-feedback" class="col-xs-2 col-md-offset-1 text-center">
+            <div id="left-hand-feedback" class="col-xs-2 col-xs-offset-1 text-center">
                 <h4>A</h4>
                 <p>Box appears in same location</p>
             </div>
 
-            <div class="col-xs-4 col-md-offset-1 text-center">
+            <div class="col-xs-4 col-xs-offset-1 text-center">
                 <div class="progress">
                     <div class="progress-bar progress-bar-success" id="prog-bar" 
                         role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
@@ -147,7 +142,7 @@
                 </div>
             </div>
 
-            <div id="right-hand-feedback" class="col-xs-2 col-md-offset-1 text-center">
+            <div id="right-hand-feedback" class="col-xs-2 col-xs-offset-1 text-center">
                 <h4>L</h4>
                 <p>When the same letter is said</p>
             </div>
@@ -155,13 +150,35 @@
 
         <!-- button row -->
         <div class="row">
-            <div class="col-xs-2 col-md-offset-5 text-center">
-                <button id="start-button" value="Start">Start</button>
+            <div class="col-xs-2 col-xs-offset-5 text-center">
+                <button id="start-button" class="btn btn-default" value="Start">Start</button>
             </div>
         </div>
 
+    </div><!-- /.container -->
+
+
+    <!-- score modal dialog -->
+    <div class="modal fade" id="scoreModal" tabindex="-1" role="dialog" aria-labelledby="scoreModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                <h4 class="modal-title" id="myModalLabel">Session complete!</h4>
+            </div>
+            <div class="modal-body">
+                <p id="next-level-info">Next level: </p>
+                <p id="correct-audio-results">Correct audio results: </p>
+                <p id="correct-visual-results">Correct visual results: </p>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+                <button id="continue-button" class="btn btn-default" value="Continue" data-dismiss="modal">Continue</button>
+            </div>
+        </div>
+      </div>
     </div>
-    <!-- /.container -->
+
 
     <!-- audio -->
     <audio src="audio/letter1.mp3" id="letter1">

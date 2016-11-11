@@ -1,6 +1,8 @@
 function BlockCreator() {
 	const default_Block_Size = 20;
-	const num_Blocks_Total = 20;
+
+	const num_Blocks_Total = 2;
+	
 	const num_Audio_Targets = 4;
 	const num_Visual_Targets = 4;
 	const num_Both_Targets = 2;
@@ -105,18 +107,18 @@ function BlockCreator() {
 		});
 
 		// OUTPUT ANSWERS FOR SCORE DEBUGGING
-		targets.forEach(function(target) {
-			var buttonToPress;
+		// targets.forEach(function(target) {
+		// 	var buttonToPress;
 
-			if(target.Value === 1) {
-				buttonToPress = 'L';
-			} else if(target.Value === 2) {
-				buttonToPress = 'A';
-			} else if(target.Value === 3) {
-				buttonToPress = 'Both';
-			}
-			console.log(target.Key + " - " + buttonToPress);
-		});
+		// 	if(target.Value === 1) {
+		// 		buttonToPress = 'L';
+		// 	} else if(target.Value === 2) {
+		// 		buttonToPress = 'A';
+		// 	} else if(target.Value === 3) {
+		// 		buttonToPress = 'Both';
+		// 	}
+		// 	console.log(target.Key + " - " + buttonToPress);
+		// });
 
 		return targets;
 	}
