@@ -106,6 +106,7 @@ function Page() {
             self._n = self._starting_N;
             self._score._score = 0;
             setProgress(0);
+            DisplayN(self._n);
 
             // reset session number
             document.getElementById("session-number").innerHTML = "1 / " + 
@@ -187,6 +188,9 @@ function Page() {
                 // change button to reset to start a brand new trial
                 continueButton.value = "Reset";
                 continueButton.textContent = "Reset";
+
+                // save progress
+                addSessionToHistory(Date.now(), averageN);
 
                 $('#scoreModal').modal('show');
                 return;

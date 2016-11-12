@@ -11,6 +11,8 @@
   <div id="qunit-fixture">
     <!-- button fixtures -->
     <button id="start-button" value="Start">Start</button>
+    <input id="save-toggle" type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="Yes" data-off="No">
+    <a id="progress-link" href="#"></a>
 
     <!-- fixture for testing n-back display -->
     <div class="text-center n-grid" id="N1">1</div>
@@ -89,6 +91,9 @@
 
   <!-- modal dialog testing needs bootstrap -->
   <script src="../bootstrap.js"></script>
+
+  <!-- toggle switch tests needs bootstrap toggle js -->
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
   <!-- NBack js scripts -->
   <script src="../Page.js" data-cover></script>

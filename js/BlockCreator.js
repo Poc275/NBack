@@ -1,8 +1,6 @@
 function BlockCreator() {
 	const default_Block_Size = 20;
-
-	const num_Blocks_Total = 2;
-	
+	const num_Blocks_Total = 20;
 	const num_Audio_Targets = 4;
 	const num_Visual_Targets = 4;
 	const num_Both_Targets = 2;

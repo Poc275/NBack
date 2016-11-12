@@ -1,20 +1,30 @@
 // Storage/history tests
 QUnit.test("Storage and score history tests", function(assert) {
+	// clear history so the length tests start from zero
+	clearHistory();
+
 	var dateOne = Date.now().toString();
-	addSessionToHistory(dateOne, 2.5);
+	addSessionToHistory("1", 2.5);
 
 	assert.ok(storageAvailable('localStorage'), "Local storage is available");
 
-	assert.deepEqual(localStorage.getItem(dateOne), "2.5", "Local storage stores a session successfully");
+	assert.deepEqual(localStorage.getItem("1"), "2.5", "Local storage stores a session successfully");
 	assert.deepEqual(localStorage.length, 1, "Local storage is populated after session added to history");
 
 	var dateTwo = Date.now().toString();
-	addSessionToHistory(dateTwo, 3);
-	assert.deepEqual(localStorage.getItem(dateTwo), "3", "Local storage stores another session successfully");
+	addSessionToHistory("2", 3);
+	assert.deepEqual(localStorage.getItem("2"), "3", "Local storage stores another session successfully");
 	assert.deepEqual(localStorage.length, 2, "Local storage is populated after second session added to history");
 
 	clearHistory();
 	assert.deepEqual(localStorage.length, 0, "Local storage is empty after call to clear history");
+
+	// toggle switch test - toggle off and try to add another session to local storage
+	$("#save-toggle").bootstrapToggle('toggle');
+	assert.notOk($("#save-toggle").prop('checked'), "Toggle switch turns off");
+	var dateThree = Date.now().toString();
+	addSessionToHistory("3", 3.5);
+	assert.deepEqual(localStorage.length, 0, "Local storage is not populated if switch is off");
 });
 
 // Page tests

@@ -22,6 +22,9 @@
     }
     </style>-->
 
+    <!-- Bootstrap Toggle -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
     <link href="css/n-back.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -46,16 +49,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Dual N-Back Training</a>
+                <a class="navbar-brand" href="index.html">Dual N-Back Training</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#">Progress</a>
+                        <a id="progress-link" href="#">Your Progress</a>
                     </li>
                     <li>
-                        <a href="#">About</a>
+                        <a href="#" data-toggle="modal" data-target="#aboutModal">What is this&quest;</a>
                     </li>
                 </ul>
             </div> <!-- /.navbar-collapse -->
@@ -88,9 +91,16 @@
         <!-- empty spacer row -->
         <br />
 
-        <div class="col-xs-12">
-            <p>Session: <span id="session-number">1 / 20</span></p>
-            <p>Score: <span id="score-text">0</span></p>
+        <div class="row">
+            <div class="col-xs-6">
+                <p>Session: <span id="session-number">1 / 20</span></p>
+                <p>Score: <span id="score-text">0</span></p>
+            </div>
+            <div class="col-xs-6 text-right">
+                <p>Save progress: 
+                    <input id="save-toggle" type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-on="Yes" data-off="No">
+                </p>
+            </div>
         </div>
 
         <!-- empty spacer row -->
@@ -146,11 +156,14 @@
         <!-- button row -->
         <div class="row">
             <div class="col-xs-2 col-xs-offset-5 text-center">
-                <button id="start-button" class="btn btn-default" value="Start">Start</button>
+                <button id="start-button" class="btn btn-default btn-lg" value="Start">Start</button>
             </div>
         </div>
 
     </div><!-- /.container -->
+
+    <!-- empty spacer row -->
+    <br />
 
 
     <!-- score modal dialog -->
@@ -167,6 +180,81 @@
             </div>
             <div class="modal-footer">
                 <button id="continue-button" class="btn btn-default" value="Continue" data-dismiss="modal">Continue</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- progress modal dialog -->
+    <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Progress History</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="progress-score-table">
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Average N Level</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" value="Ok" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- about modal dialog -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">About</h4>
+            </div>
+            <div class="modal-body">
+                <h4>Dual N-Back Training</h4>
+                <blockquote cite="http://www.soakyourhead.com/Default.aspx">
+                    <p>Dual N-Back training is an application that may, with daily training, improve a person's intelligence.</p>
+                    <footer>
+                        <a href="http://www.soakyourhead.com/Default.aspx">
+                            soakyourhead.com
+                        </a>
+                    </footer>
+                </blockquote>
+
+                <p>This application is a replica of the Dual N-Back application that was used in Jaeggi, S., Buschkuehl, M., Jonides, J. and Perrig, W. (2008). 
+                    Improving fluid intelligence with training on working memory. <cite>Proceedings of the National Academy of Sciences of the United States 
+                    of America</cite>, 105(19), pp. 6829-6833. Further information available 
+                    <a href="http://www.soakyourhead.com/Research.aspx">on the original site</a>, and 
+                    <a href="http://www.pnas.org/content/105/19/6829.abstract">in the research paper</a>.</p>
+
+                <p>The application is a Javascript conversion of the 
+                    <a href="http://www.soakyourhead.com/dual-n-back.aspx">original Silverlight version</a>
+                    (<a href="http://www.soakyourhead.com/dual-n-back-open-source.aspx">source code</a>). 
+                    As support for Silverlight diminishes in most modern browsers, this conversion will hopefully help users continue to use Dual N-Back training.</p>
+
+                <h4>How to play</h4>
+                <p>When you press the Start button, the application will begin by showing you a box and playing an audio recording of a letter. Remember where the box 
+                    appeared and also remember the letter. After a few seconds, another box appears and another letter is played. Remember these, too. When you start the game
+                    it will start at the 2-back level (displayed across the top). This means that you need to remember if a letter was repeated or a box appeared in the same 
+                    location 2 times ago. For example: 
+                    <ol>
+                        <li>Top-right corner, letter 'F'.</li>
+                        <li>Bottom-right corner, letter 'G'.</li>
+                        <li>Top-right corner, letter 'S'.</li>
+                        <li>Bottom-middle, letter 'Q'.</li>
+                    </ol>
+                    For the first 2 'blocks' you don't need to do anything because you are at the 2-back level (this obviously increases as you go up the levels). But when the
+                    third block is presented you need to decide if it matches the position or the letter of block 1. Likewise for block 4, does it match either the position, letter, 
+                    or both, of block 2, etc. etc. Press the letter 'a' on the keyboard if the position matches, 'l' if the letter matches, or both if they both match.
+                </p>
             </div>
         </div>
       </div>
@@ -191,6 +279,9 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap toggle -->
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     <!-- NBack js scripts -->
     <script src="js/Consonant.js"></script>
