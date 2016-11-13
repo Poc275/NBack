@@ -6,8 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Dual N-Back training for memory and intelligence">
 
     <title>Dual N-Back Training</title>
 
@@ -55,10 +54,13 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
+                        <a href="#" data-toggle="modal" data-target="#howToPlayModal">How To Play</a>
+                    </li>
+                    <li>
                         <a id="progress-link" href="#">Your Progress</a>
                     </li>
                     <li>
-                        <a href="#" data-toggle="modal" data-target="#aboutModal">What is this&quest;</a>
+                        <a href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                     </li>
                 </ul>
             </div> <!-- /.navbar-collapse -->
@@ -210,6 +212,47 @@
     </div>
 
 
+    <!-- how to play modal dialog -->
+    <div class="modal fade" id="howToPlayModal" tabindex="-1" role="dialog" aria-labelledby="howToPlayModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">How to Play</h4>
+            </div>
+            <div class="modal-body">
+                <p>When you press the Start button, the application will begin by showing you a box and playing an audio recording of a letter. Remember where the box 
+                    appeared and also remember the letter. After a few seconds, another box appears and another letter is played. Remember these, too. When you start the game, 
+                    it will start at the 2-back level (displayed across the top). This means that you need to remember if a letter was repeated or a box appeared in the same 
+                    location 2 times ago. For example: 
+                    <ol>
+                        <li>Top-right corner, letter 'F'.</li>
+                        <li>Bottom-right corner, letter 'G'.</li>
+                        <li>Top-right corner, letter 'S'.</li>
+                        <li>Bottom-middle, letter 'G'.</li>
+                    </ol>
+                    For the first 2 'blocks' you don't need to do anything because you are at the 2-back level (this obviously increases as you go up the levels). But when the
+                    third block is presented you need to decide if it matches the position or the letter (or both) of block 1. Likewise, for block 4, does it match either the position, letter, 
+                    or both, of block 2, etc. etc. Press the letter 'a' on the keyboard if the position matches, 'l' if the letter matches, or both if they both match.
+                </p>
+                <p>So, from the example above, when block 3 is presented, the position matches block 1 (top-right corner), but the letters do not. So, press 'a'. For block 4, the 
+                    position doesn't match block 2, but the letter does, so press 'l'. Remember blocks 3 and 4 to carry on. Each session has 20 blocks. At the end of the session, if you 
+                    have performed well, the level will increase to 3. So, you need to remember whenever the letter/square matches what was said/displayed 3 times ago. The level can 
+                    increase or decrease depending on your performance. An entire training run consists of 20 sessions. Finish the entire run to see your results, which you can 
+                    optionally save by toggling the save progress switch.
+                </p>
+                <p>Be aware that this is a difficult game. At first, it will be difficult to press the correct keys. Be assured that this was the same for the research subjects when 
+                    they first started. However, after enough practice, the subjects improved.
+                </p>
+                <p>For more information see the <a href="http://www.soakyourhead.com/dual-n-back.aspx" target="_blank">demo on the original site</a>. Note this requires Silverlight. 
+                    I will be porting the demo to a native web application in due course.
+                </p>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
     <!-- about modal dialog -->
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel">
       <div class="modal-dialog" role="document">
@@ -219,11 +262,10 @@
                 <h4 class="modal-title" id="myModalLabel">About</h4>
             </div>
             <div class="modal-body">
-                <h4>Dual N-Back Training</h4>
                 <blockquote cite="http://www.soakyourhead.com/Default.aspx">
                     <p>Dual N-Back training is an application that may, with daily training, improve a person's intelligence.</p>
                     <footer>
-                        <a href="http://www.soakyourhead.com/Default.aspx">
+                        <a href="http://www.soakyourhead.com/Default.aspx" target="_blank">
                             soakyourhead.com
                         </a>
                     </footer>
@@ -232,28 +274,15 @@
                 <p>This application is a replica of the Dual N-Back application that was used in Jaeggi, S., Buschkuehl, M., Jonides, J. and Perrig, W. (2008). 
                     Improving fluid intelligence with training on working memory. <cite>Proceedings of the National Academy of Sciences of the United States 
                     of America</cite>, 105(19), pp. 6829-6833. Further information available 
-                    <a href="http://www.soakyourhead.com/Research.aspx">on the original site</a>, and 
-                    <a href="http://www.pnas.org/content/105/19/6829.abstract">in the research paper</a>.</p>
+                    <a href="http://www.soakyourhead.com/Research.aspx" target="_blank">on the original site</a>, and 
+                    <a href="http://www.pnas.org/content/105/19/6829.abstract" target="_blank">in the research paper</a>.
+                </p>
 
-                <p>The application is a Javascript conversion of the 
-                    <a href="http://www.soakyourhead.com/dual-n-back.aspx">original Silverlight version</a>
-                    (<a href="http://www.soakyourhead.com/dual-n-back-open-source.aspx">source code</a>). 
-                    As support for Silverlight diminishes in most modern browsers, this conversion will hopefully help users continue to use Dual N-Back training.</p>
-
-                <h4>How to play</h4>
-                <p>When you press the Start button, the application will begin by showing you a box and playing an audio recording of a letter. Remember where the box 
-                    appeared and also remember the letter. After a few seconds, another box appears and another letter is played. Remember these, too. When you start the game
-                    it will start at the 2-back level (displayed across the top). This means that you need to remember if a letter was repeated or a box appeared in the same 
-                    location 2 times ago. For example: 
-                    <ol>
-                        <li>Top-right corner, letter 'F'.</li>
-                        <li>Bottom-right corner, letter 'G'.</li>
-                        <li>Top-right corner, letter 'S'.</li>
-                        <li>Bottom-middle, letter 'Q'.</li>
-                    </ol>
-                    For the first 2 'blocks' you don't need to do anything because you are at the 2-back level (this obviously increases as you go up the levels). But when the
-                    third block is presented you need to decide if it matches the position or the letter of block 1. Likewise for block 4, does it match either the position, letter, 
-                    or both, of block 2, etc. etc. Press the letter 'a' on the keyboard if the position matches, 'l' if the letter matches, or both if they both match.
+                <p>The application is a JavaScript conversion of the 
+                    <a href="http://www.soakyourhead.com/dual-n-back.aspx" target="_blank">original Silverlight version</a>
+                    (<a href="http://www.soakyourhead.com/dual-n-back-open-source.aspx" target="_blank">source code</a>). 
+                    As support for Silverlight diminishes in most modern browsers, this conversion will hopefully help users continue to use Dual N-Back training. Feel 
+                    free to use the <a href="https://github.com/Poc275/NBack" target="_blank">converted source code</a> to improve the application, or to make your own version.
                 </p>
             </div>
         </div>
